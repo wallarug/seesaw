@@ -53,6 +53,10 @@ ifeq ($(CHIP_FAMILY), SAMD10)
 INCLUDES += -Ilib/samd10/include/
 endif
 
+ifeq ($(CHIP_FAMILY), SAMD51)
+INCLUDES += -Ilib/samd51a/include/
+endif
+
 SSOURCES = \
 	$(QPPORT)/qxk_port.S \
 
@@ -69,6 +73,11 @@ endif
 ifeq ($(CHIP_FAMILY), SAMD10)
 CSOURCES = Device_Startup/startup_samd10.c \
 	Device_Startup/system_samd10.c
+endif
+
+ifeq ($(CHIP_FAMILY), SAMD51)
+CSOURCES = Device_Startup/startup_samd51.c \
+	Device_Startup/system_samd51.c
 endif
 
 COMMON_SRC = \
