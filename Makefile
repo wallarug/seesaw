@@ -54,7 +54,7 @@ INCLUDES += -Ilib/samd10/include/
 endif
 
 ifeq ($(CHIP_FAMILY), SAMD51)
-INCLUDES += -Ilib/samd51a/include/
+INCLUDES += -Ilib//samd51/samd51a/include/
 endif
 
 SSOURCES = \
@@ -129,6 +129,13 @@ SOURCES = $(COMMON_SRC) \
 	bsp/adafruit_ptc.cpp \
 
 ifeq ($(CHIP_FAMILY), SAMD21)
+FULL_SOURCES = $(SOURCES) \
+	source/AOUSB.cpp \
+	source/USB/CDC.cpp \
+	source/USB/USBCore.cpp
+endif
+
+ifeq ($(CHIP_FAMILY), SAMD51)
 FULL_SOURCES = $(SOURCES) \
 	source/AOUSB.cpp \
 	source/USB/CDC.cpp \
