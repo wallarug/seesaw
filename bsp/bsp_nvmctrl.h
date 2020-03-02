@@ -93,11 +93,19 @@ static void eeprom_program(uint8_t *buf, uint8_t size)
 	uint32_t nvm_address = EEPROM_ADDR / 2;
 	uint16_t i, data;
 
+#ifndef SAMD51
 	while (!NVMCTRL->INTFLAG.bit.READY);
 	
 	NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMD_PBC | NVMCTRL_CTRLA_CMDEX_KEY;
 
 	while (!NVMCTRL->INTFLAG.bit.READY);
+#else
+	while (!NVMCTRL->STATUS.bit.READY);
+
+	NVMCTRL->CTRLB.reg = NVMCTRL_CTRLB_CMD_PBC | NVMCTRL_CTRLB_CMDEX_KEY;
+	
+	while (!NVMCTRL->STATUS.bit.READY);
+#endif
 	
 	/* Clear flags */
 	NVMCTRL->STATUS.reg = NVMCTRL_STATUS_MASK;
@@ -110,10 +118,17 @@ static void eeprom_program(uint8_t *buf, uint8_t size)
 		NVM_MEMORY[nvm_address++] = data;
 	}
 
+#ifndef SAMD51
 	while (!NVMCTRL->INTFLAG.bit.READY);
 
 	NVMCTRL->ADDR.reg = EEPROM_ADDR / 2;
 	NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMD_WP | NVMCTRL_CTRLA_CMDEX_KEY;
+#else
+	while (!NVMCTRL->STATUS.bit.READY);
+
+	NVMCTRL->ADDR.reg = EEPROM_ADDR / 2;
+	NVMCTRL->CTRLB.reg = NVMCTRL_CTRLB_CMD_WP | NVMCTRL_CTRLB_CMDEX_KEY;
+#endif
 }
 static void eeprom_write(uint8_t addr, uint8_t *buf, uint8_t size)
 {
