@@ -14,10 +14,17 @@
 
 static inline void eeprom_init()
 {
+#ifndef SAMD51
 	uint32_t ctrlb  = NVMCTRL->CTRLB.reg & ~(NVMCTRL_CTRLB_RWS_Msk | NVMCTRL_CTRLB_MANW);
 	ctrlb |= NVMCTRL->CTRLB.reg & (NVMCTRL_CTRLB_RWS_Msk | NVMCTRL_CTRLB_MANW);
 	
 	NVMCTRL->CTRLB.reg = ctrlb;
+#else
+	uint32_t ctrla  = NVMCTRL->CTRLA.reg & ~(NVMCTRL_CTRLA_RWS_Msk | NVMCTRL_CTRLA_WMODE_MAN);
+	ctrla |= NVMCTRL->CTRLA.reg & (NVMCTRL_CTRLA_RWS_Msk | NVMCTRL_CTRLA_WMODE_MAN);
+	
+	NVMCTRL->CTRLA.reg = ctrla;
+#endif
 }
 
 static void eeprom_erase()
