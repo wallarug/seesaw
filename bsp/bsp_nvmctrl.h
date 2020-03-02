@@ -59,15 +59,12 @@ static void eeprom_read(uint8_t addr, uint8_t *buf, uint8_t size)
 
 #ifndef SAMD51
 	while (!NVMCTRL->INTFLAG.bit.READY);
-
-	/* Clear flags */
-	NVMCTRL->STATUS.reg = NVMCTRL_STATUS_MASK;
 #else
-	while (!NVMCTRL->INTFLAG.bit.READY);
+	while (!NVMCTRL->STATUS.bit.READY);
+#endif
 
 	/* Clear flags */
 	NVMCTRL->STATUS.reg = NVMCTRL_STATUS_MASK;
-#endif
 
 	/* Check whether byte address is word-aligned*/
 	if (src_addr % 2) {
