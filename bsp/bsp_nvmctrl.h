@@ -29,6 +29,7 @@ static inline void eeprom_init()
 
 static void eeprom_erase()
 {
+#ifndef SAMD51
 	while (!NVMCTRL->INTFLAG.bit.READY);
 
 	/* Clear flags */
@@ -37,6 +38,16 @@ static void eeprom_erase()
 	/* Set address and command */
 	NVMCTRL->ADDR.reg = EEPROM_ADDR / 2;
 	NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMD_ER | NVMCTRL_CTRLA_CMDEX_KEY;
+#else
+	while (!NVMCTRL->STATUS.bit.READY);
+
+	/* Clear flags */
+	NVMCTRL->STATUS.reg = NVMCTRL_STATUS_MASK;
+
+	/* Set address and command */
+	NVMCTRL->ADDR.reg = EEPROM_ADDR / 2;
+	NVMCTRL->CTRLB.reg = NVMCTRL_CTRLB_CMD_EB | NVMCTRL_CTRLB_CMDEX_KEY;
+#endif
 }
 
 static void eeprom_read(uint8_t addr, uint8_t *buf, uint8_t size)
