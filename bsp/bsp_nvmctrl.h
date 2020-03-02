@@ -50,7 +50,11 @@ static void eeprom_erase()
 #endif
 }
 
+#ifndef SAMD51
 static void eeprom_read(uint8_t addr, uint8_t *buf, uint8_t size)
+#else
+static void eeprom_read(uint8_t addr, uint8_t *buf, uint16_t size)
+#endif
 {
 	uint32_t src_addr = (EEPROM_ADDR  + addr);
 	uint32_t nvm_address = src_addr / 2;
@@ -87,7 +91,11 @@ static void eeprom_read(uint8_t addr, uint8_t *buf, uint8_t size)
 	}
 }
 
+#ifndef SAMD51
 static void eeprom_program(uint8_t *buf, uint8_t size)
+#else
+static void eeprom_program(uint8_t *buf, uint16_t size)
+#endif
 {
 
 	uint32_t nvm_address = EEPROM_ADDR / 2;
