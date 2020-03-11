@@ -16,6 +16,7 @@ static uint32_t INT1VH;      // Hot temp 2's complement of the internal 1V refer
 
 static void adc_set_defaults()
 {
+#ifndef SAMD51
 	ADC->CTRLB.reg = ADC_CTRLB_PRESCALER_DIV64 |    // Divide Clock by 64.
 					ADC_CTRLB_RESSEL_10BIT;         // 10 bits resolution as default
 
@@ -31,6 +32,23 @@ static void adc_set_defaults()
 
 	ADC->INPUTCTRL.bit.GAIN = ADC_INPUTCTRL_GAIN_DIV2_Val;
 	ADC->REFCTRL.bit.REFSEL = ADC_REFCTRL_REFSEL_INTVCC1_Val; // 1/2 VDDANA = 0.5* 3V3 = 1.65V
+#else
+	ADC0->CTRLB.reg = ADC_CTRLB_PRESCALER_DIV64 | ADC_CTRLB_RESSEL_10BIT;
+	ADC1->CTRLB.reg = ADC_CTRLB_RESSEL_10BIT;
+
+	//ADC0->SAMPCTRL.reg = 0x3f;
+	//ADC1->SAMPCTRL.reg = 0x3f;
+
+	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
+	while(ADC1->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
+
+	ADC0->INPUTCTRL.reg = ADC_INPUTCTRL_MUXNEG_GND;
+	ADC1->INPUTCTRL.reg = ADC_INPUTCTRL_MUXNEG_GND;
+
+	//ADC0->INPUTCTRL.bit.GAIN = ADC_INPUTCTRL_GAIN_DIV2_Val;
+	ADC0->REFCTRL.bit.REFSEL = ADC_REFCTRL_REFSEL_INTVCC0_Val; // 1/2 VDDANA = 1.65
+	ADC1->REFCTRL.bit.REFSEL = ADC_REFCTRL_REFSEL_INTVCC0_Val; // 
+#endif
 }
 
 void adc_init()
@@ -143,7 +161,7 @@ uint16_t adc_read(uint8_t channel)
 
 	// Store the value
 	while (ADC0->INTFLAG.bit.RESRDY == 0);   // Waiting for conversion to complete
-	valueRead = ADC0->RESULT.reg;
+	uint16_t valueRead = ADC0->RESULT.reg;
 
 	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE ); //wait for sync
 	ADC0->CTRLA.bit.ENABLE = 0x00;             // Disable ADC
