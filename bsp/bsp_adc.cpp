@@ -74,6 +74,7 @@ void adc_set_inputscan(uint8_t channels)
 
 uint16_t adc_read(uint8_t channel)
 {
+#ifndef SAMD51
 	syncADC();
 	ADC->INPUTCTRL.bit.MUXPOS = channel; // Selection for the positive ADC input
 
@@ -110,6 +111,44 @@ uint16_t adc_read(uint8_t channel)
 	syncADC();
 	ADC->CTRLA.bit.ENABLE = 0x00;             // Disable ADC
 	syncADC();
+#else
+	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_INPUTCTRL ); //wait for sync
+	ADC0->INPUTCTRL.bit.MUXPOS = channel; // Selection for the positive ADC input
+
+	// Control A
+	/*
+	* Bit 1 ENABLE: Enable
+	*   0: The ADC is disabled.
+	*   1: The ADC is enabled.
+	* Due to synchronization, there is a delay from writing CTRLA.ENABLE until the peripheral is enabled/disabled. The
+	* value written to CTRL.ENABLE will read back immediately and the Synchronization Busy bit in the Status register
+	* (STATUS.SYNCBUSY) will be set. STATUS.SYNCBUSY will be cleared when the operation is complete.
+	*
+	* Before enabling the ADC, the asynchronous clock source must be selected and enabled, and the ADC reference must be
+	* configured. The first conversion after the reference is changed must not be used.
+	*/
+	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE ); //wait for sync
+	ADC0->CTRLA.bit.ENABLE = 0x01;             // Enable ADC
+
+	// Start conversion
+	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE ); //wait for sync
+
+	ADC0->SWTRIG.bit.START = 1;
+
+	// Clear the Data Ready flag
+	ADC0->INTFLAG.reg = ADC_INTFLAG_RESRDY;
+
+	// Start conversion again, since The first conversion after the reference is changed must not be used.
+	ADC0->SWTRIG.bit.START = 1;
+
+	// Store the value
+	while (ADC0->INTFLAG.bit.RESRDY == 0);   // Waiting for conversion to complete
+	valueRead = ADC0->RESULT.reg;
+
+	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE ); //wait for sync
+	ADC0->CTRLA.bit.ENABLE = 0x00;             // Disable ADC
+	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE ); //wait for sync	
+#endif
 	
 	return valueRead;
 }
