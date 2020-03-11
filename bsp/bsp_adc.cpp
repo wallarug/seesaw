@@ -87,6 +87,7 @@ void adc_init()
 
 void adc_set_freerunning(bool mode)
 {
+#ifndef SAMD51
 	syncADC();
 	ADC->CTRLA.bit.ENABLE = 0;
 	
@@ -97,6 +98,18 @@ void adc_set_freerunning(bool mode)
 	ADC->CTRLA.bit.ENABLE = mode;
 	
 	syncADC();
+#else
+	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
+	ADC0->CTRLA.bit.ENABLE = 0;
+
+	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
+	ADC0->CTRLB.bit.FREERUN = mode;
+
+	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
+	ADC0->CTRLA.bit.ENABLE = mode;
+
+	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
+#endif
 }
 
 void adc_set_inputscan(uint8_t channels)
