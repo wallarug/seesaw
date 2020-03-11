@@ -33,17 +33,26 @@ static void adc_set_defaults()
 	ADC->INPUTCTRL.bit.GAIN = ADC_INPUTCTRL_GAIN_DIV2_Val;
 	ADC->REFCTRL.bit.REFSEL = ADC_REFCTRL_REFSEL_INTVCC1_Val; // 1/2 VDDANA = 0.5* 3V3 = 1.65V
 #else
-	ADC0->CTRLB.reg = ADC_CTRLB_PRESCALER_DIV64 | ADC_CTRLB_RESSEL_10BIT;
-	ADC1->CTRLB.reg = ADC_CTRLB_RESSEL_10BIT;
-
-	//ADC0->SAMPCTRL.reg = 0x3f;
-	//ADC1->SAMPCTRL.reg = 0x3f;
+	ADC0->CTRLA.bit.PRESCALER = ADC_CTRLA_PRESCALER_DIV64_Val;
+	ADC1->CTRLA.bit.PRESCALER = ADC_CTRLA_PRESCALER_DIV64_Val;
+	
+	ADC0->CTRLB.bit.RESSEL = ADC_CTRLB_RESSEL_10BIT_Val;
+	ADC1->CTRLB.bit.RESSEL = ADC_CTRLB_RESSEL_10BIT_Val; 
 
 	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
 	while(ADC1->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
 
+	ADC0->SAMPCTRL.reg = 0x3f;
+	ADC1->SAMPCTRL.reg = 0x3f;
+
+	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_SAMPCTRL );  //wait for sync
+	while( ADC1->SYNCBUSY.reg & ADC_SYNCBUSY_SAMPCTRL );  //wait for sync
+
 	ADC0->INPUTCTRL.reg = ADC_INPUTCTRL_MUXNEG_GND;
 	ADC1->INPUTCTRL.reg = ADC_INPUTCTRL_MUXNEG_GND;
+
+	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_INPUTCTRL );  //wait for sync
+	while( ADC1->SYNCBUSY.reg & ADC_SYNCBUSY_INPUTCTRL );  //wait for sync
 
 	//ADC0->INPUTCTRL.bit.GAIN = ADC_INPUTCTRL_GAIN_DIV2_Val;
 	ADC0->REFCTRL.bit.REFSEL = ADC_REFCTRL_REFSEL_INTVCC0_Val; // 1/2 VDDANA = 1.65
@@ -53,6 +62,7 @@ static void adc_set_defaults()
 
 void adc_init()
 {
+#ifndef SAMD51
 	// Initialize Analog Controller
 	// Setting clock
 	while(GCLK->STATUS.reg & GCLK_STATUS_SYNCBUSY);
@@ -66,8 +76,13 @@ void adc_init()
 	ADC->CTRLA.bit.SWRST = 1;
 	
 	while( ADC->STATUS.bit.SYNCBUSY == 1 || ADC->CTRLA.bit.SWRST == 1);
+#else
+	GCLK->PCHCTRL[ADC0_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK1_Val | (1 << GCLK_PCHCTRL_CHEN_Pos); //use clock generator 1 (48Mhz)
+	GCLK->PCHCTRL[ADC1_GCLK_ID].reg = GCLK_PCHCTRL_GEN_GCLK1_Val | (1 << GCLK_PCHCTRL_CHEN_Pos); //use clock generator 1 (48Mhz)
 
+#endif
 	adc_set_defaults();
+
 }
 
 void adc_set_freerunning(bool mode)
