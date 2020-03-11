@@ -33,8 +33,8 @@ static void adc_set_defaults()
 	ADC->INPUTCTRL.bit.GAIN = ADC_INPUTCTRL_GAIN_DIV2_Val;
 	ADC->REFCTRL.bit.REFSEL = ADC_REFCTRL_REFSEL_INTVCC1_Val; // 1/2 VDDANA = 0.5* 3V3 = 1.65V
 #else
-	ADC0->CTRLA.bit.PRESCALER = ADC_CTRLA_PRESCALER_DIV64_Val;
-	ADC1->CTRLA.bit.PRESCALER = ADC_CTRLA_PRESCALER_DIV64_Val;
+	ADC0->CTRLA.bit.PRESCALER = ADC_CTRLA_PRESCALER_DIV64_Val; //DIV32?
+	ADC1->CTRLA.bit.PRESCALER = ADC_CTRLA_PRESCALER_DIV64_Val; //
 	
 	ADC0->CTRLB.bit.RESSEL = ADC_CTRLB_RESSEL_10BIT_Val;
 	ADC1->CTRLB.bit.RESSEL = ADC_CTRLB_RESSEL_10BIT_Val; 
@@ -42,8 +42,8 @@ static void adc_set_defaults()
 	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
 	while(ADC1->SYNCBUSY.reg & ADC_SYNCBUSY_CTRLB); //wait for sync
 
-	ADC0->SAMPCTRL.reg = 0x3f;
-	ADC1->SAMPCTRL.reg = 0x3f;
+	ADC0->SAMPCTRL.reg = 0x3f; // 5?
+	ADC1->SAMPCTRL.reg = 0x3f; //
 
 	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_SAMPCTRL );  //wait for sync
 	while( ADC1->SYNCBUSY.reg & ADC_SYNCBUSY_SAMPCTRL );  //wait for sync
@@ -182,7 +182,6 @@ uint16_t adc_read(uint8_t channel)
 	ADC0->CTRLA.bit.ENABLE = 0x00;             // Disable ADC
 	while( ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE ); //wait for sync	
 #endif
-	
 	return valueRead;
 }
 
