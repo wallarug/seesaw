@@ -99,16 +99,16 @@ void adc_set_freerunning(bool mode)
 	
 	syncADC();
 #else
-	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE); //wait for sync
+	syncADC();
 	ADC0->CTRLA.bit.ENABLE = 0;
 
-	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE); //wait for sync
+	syncADC();
 	ADC0->CTRLB.bit.FREERUN = mode;
 
-	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE); //wait for sync
+	syncADC();
 	ADC0->CTRLA.bit.ENABLE = mode;
 
-	while(ADC0->SYNCBUSY.reg & ADC_SYNCBUSY_ENABLE); //wait for sync
+	syncADC();
 #endif
 }
 
