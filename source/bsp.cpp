@@ -180,7 +180,14 @@ void QF::onStartup(void) {
 #endif
 
 #if defined(SAMD21)
+#ifndef SAMD51
 	NVIC_SetPriority(USB_IRQn, USB_ISR_PRIO);
+#else
+	NVIC_SetPriority(USB_0_IRQn, USB_ISR_PRIO);
+	NVIC_SetPriority(USB_1_IRQn, USB_ISR_PRIO);
+	NVIC_SetPriority(USB_2_IRQn, USB_ISR_PRIO);
+	NVIC_SetPriority(USB_3_IRQn, USB_ISR_PRIO);
+#endif
 #endif
 	//NVIC_SetPriority(NVMCTRL_IRQn, NVMCTRL_ISR_PRIO);
 
@@ -296,7 +303,14 @@ void QF::onStartup(void) {
 #endif
 
 #if CONFIG_USB
+#ifndef SAMD51
 	NVIC_EnableIRQ(USB_IRQn);
+#else
+	NVIC_EnableIRQ(USB_0_IRQn);
+	NVIC_EnableIRQ(USB_1_IRQn);
+	NVIC_EnableIRQ(USB_2_IRQn);
+	NVIC_EnableIRQ(USB_3_IRQn);
+#endif
 #endif
 
 #if CONFIG_ENCODER
