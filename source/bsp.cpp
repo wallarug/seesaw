@@ -314,7 +314,6 @@ void QF::onStartup(void) {
 #endif
 #endif
 
-
 #ifdef SAMD51
 	NVIC_EnableIRQ(SERCOM3_0_IRQn);
 	NVIC_EnableIRQ(SERCOM3_1_IRQn);
