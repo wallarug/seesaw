@@ -185,19 +185,47 @@ void QF::onStartup(void) {
 	//NVIC_SetPriority(NVMCTRL_IRQn, NVMCTRL_ISR_PRIO);
 
 #if defined(SERCOM0)
+#ifndef SAMD51
 	NVIC_SetPriority(SERCOM0_IRQn, SERCOM_ISR_PRIO);
+#else
+	NVIC_SetPriority(SERCOM0_0_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM0_1_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM0_2_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM0_3_IRQn, SERCOM_ISR_PRIO);
+#endif
 #endif
 
 #if defined(SERCOM1)
+#ifndef SAMD51
 	NVIC_SetPriority(SERCOM1_IRQn, SERCOM_ISR_PRIO);
+#else
+	NVIC_SetPriority(SERCOM1_0_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM1_1_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM1_2_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM1_3_IRQn, SERCOM_ISR_PRIO);
+#endif
 #endif
 
 #if defined(SERCOM2)
+#ifndef SAMD51
 	NVIC_SetPriority(SERCOM2_IRQn, SERCOM_ISR_PRIO);
+#else
+	NVIC_SetPriority(SERCOM2_0_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM2_1_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM2_2_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM2_3_IRQn, SERCOM_ISR_PRIO);
+#endif
 #endif
 
 #if defined(SERCOM5)
+#ifndef SAMD51
 	NVIC_SetPriority(SERCOM5_IRQn, SERCOM_ISR_PRIO);
+#else
+	NVIC_SetPriority(SERCOM5_0_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM5_1_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM5_2_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM5_3_IRQn, SERCOM_ISR_PRIO);
+#endif
 #endif
 
 #if CONFIG_ENCODER
@@ -224,19 +252,47 @@ void QF::onStartup(void) {
 #endif
 
 #if CONFIG_SERCOM0
+#ifndef SAMD51
 	NVIC_EnableIRQ(SERCOM0_IRQn);
+#else
+	NVIC_EnableIRQ(SERCOM0_0_IRQn);
+	NVIC_EnableIRQ(SERCOM0_1_IRQn);
+	NVIC_EnableIRQ(SERCOM0_2_IRQn);
+	NVIC_EnableIRQ(SERCOM0_3_IRQn);
+#endif
 #endif
 
 #if CONFIG_SERCOM1
+#ifndef SAMD51
 	NVIC_EnableIRQ(SERCOM1_IRQn);
+#else
+	NVIC_EnableIRQ(SERCOM1_0_IRQn);
+	NVIC_EnableIRQ(SERCOM1_1_IRQn);
+	NVIC_EnableIRQ(SERCOM1_2_IRQn);
+	NVIC_EnableIRQ(SERCOM1_3_IRQn);
+#endif
 #endif
 
 #if CONFIG_SERCOM2
+#ifndef SAMD51
 	NVIC_EnableIRQ(SERCOM2_IRQn);
+#else
+	NVIC_EnableIRQ(SERCOM2_0_IRQn);
+	NVIC_EnableIRQ(SERCOM2_1_IRQn);
+	NVIC_EnableIRQ(SERCOM2_2_IRQn);
+	NVIC_EnableIRQ(SERCOM2_3_IRQn);
+#endif
 #endif
 
 #if CONFIG_SERCOM5
+#ifndef SAMD51
 	NVIC_EnableIRQ(SERCOM5_IRQn);
+#else
+	NVIC_EnableIRQ(SERCOM5_0_IRQn);
+	NVIC_EnableIRQ(SERCOM5_1_IRQn);
+	NVIC_EnableIRQ(SERCOM5_2_IRQn);
+	NVIC_EnableIRQ(SERCOM5_3_IRQn);
+#endif
 #endif
 
 #if CONFIG_USB
