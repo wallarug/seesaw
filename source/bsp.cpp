@@ -171,12 +171,17 @@ void QF::onStartup(void) {
 	NVIC_SetPriority(PendSV_IRQn, 0xFF);
 	SysTick_Config(SystemCoreClock / BSP_TICKS_PER_SEC);
 	NVIC_SetPriority(SysTick_IRQn, SYSTICK_PRIO);
+
+#ifndef SAMD51
 #if CONFIG_I2C_SLAVE
 	NVIC_SetPriority(CONFIG_I2C_SLAVE_IRQn, I2C_SLAVE_ISR_PRIO);
 #endif
+#endif
 
+#ifndef SAMD51
 #if CONFIG_SPI_SLAVE
 	NVIC_SetPriority(CONFIG_SPI_SLAVE_IRQn, SPI_SLAVE_ISR_PRIO);
+#endif
 #endif
 
 #if defined(SAMD21)
@@ -224,6 +229,20 @@ void QF::onStartup(void) {
 #endif
 #endif
 
+#ifdef SAMD51
+	NVIC_SetPriority(SERCOM3_0_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM3_1_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM3_2_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM3_3_IRQn, SERCOM_ISR_PRIO);
+#endif
+
+#ifdef SAMD51
+	NVIC_SetPriority(SERCOM4_0_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM4_1_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM4_2_IRQn, SERCOM_ISR_PRIO);
+	NVIC_SetPriority(SERCOM4_3_IRQn, SERCOM_ISR_PRIO);
+#endif
+
 #if defined(SERCOM5)
 #ifndef SAMD51
 	NVIC_SetPriority(SERCOM5_IRQn, SERCOM_ISR_PRIO);
@@ -250,12 +269,16 @@ void QF::onStartup(void) {
     // enable IRQs...
     NVIC_EnableIRQ(SysTick_IRQn);
 	//NVIC_EnableIRQ(NVMCTRL_IRQn);
+#ifndef SAMD51
 #if CONFIG_I2C_SLAVE
 	NVIC_EnableIRQ(CONFIG_I2C_SLAVE_IRQn);
 #endif
+#endif
 
+#ifndef SAMD51
 #if CONFIG_SPI_SLAVE
 	NVIC_EnableIRQ(CONFIG_SPI_SLAVE_IRQn);
+#endif
 #endif
 
 #if CONFIG_SERCOM0
@@ -289,6 +312,21 @@ void QF::onStartup(void) {
 	NVIC_EnableIRQ(SERCOM2_2_IRQn);
 	NVIC_EnableIRQ(SERCOM2_3_IRQn);
 #endif
+#endif
+
+
+#ifdef SAMD51
+	NVIC_EnableIRQ(SERCOM3_0_IRQn);
+	NVIC_EnableIRQ(SERCOM3_1_IRQn);
+	NVIC_EnableIRQ(SERCOM3_2_IRQn);
+	NVIC_EnableIRQ(SERCOM3_3_IRQn);
+#endif
+
+#ifdef SAMD51
+	NVIC_EnableIRQ(SERCOM4_0_IRQn);
+	NVIC_EnableIRQ(SERCOM4_1_IRQn);
+	NVIC_EnableIRQ(SERCOM4_2_IRQn);
+	NVIC_EnableIRQ(SERCOM4_3_IRQn);
 #endif
 
 #if CONFIG_SERCOM5
