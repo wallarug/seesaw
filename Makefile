@@ -54,7 +54,7 @@ INCLUDES += -Ilib/samd10/include/
 endif
 
 ifeq ($(CHIP_FAMILY), SAMD51)
-INCLUDES += -Ilib//samd51/samd51a/include/
+INCLUDES += -Ilib/samd51/samd51a/include/
 endif
 
 SSOURCES = \
