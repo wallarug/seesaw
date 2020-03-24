@@ -10,7 +10,12 @@ else
 ENABLE_LOGGING =
 endif
 
+
+ifeq ($(CHIP_FAMILY), SAMD51)
+COMMON_FLAGS = -mthumb -mcpu=cortex-m4 -Os -g3 -D$(CHIP_FAMILY) -D__$(CHIP_VARIANT)__ -DBOARD_$(BOARD_NAME) $(ENABLE_LOGGING)
+else
 COMMON_FLAGS = -mthumb -mcpu=cortex-m0plus -Os -g3 -D$(CHIP_FAMILY) -D__$(CHIP_VARIANT)__ -DBOARD_$(BOARD_NAME) $(ENABLE_LOGGING)
+endif
 
 WFLAGS = \
 -Wall -Werror
