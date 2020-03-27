@@ -261,16 +261,28 @@ seesaw_adc_read:
 			switch (reg){
 				case SEESAW_ADC_INTEN:{
 					me->m_inten.set(req.getValue());
+#ifndef SAMD51
 					ADC->INTENSET.bit.WINMON = me->m_inten.WINMON;
+#else
+					ADC0->INTENSET.bit.WINMON = me->m_inten.WINMON;
+#endif
 					break;
 				}
 				case SEESAW_ADC_INTENCLR:{
 					me->m_inten.clr(req.getValue());
+#ifndef SAMD51
 					ADC->INTENSET.bit.WINMON = me->m_inten.WINMON;
+#else
+					ADC0->INTENSET.bit.WINMON = me->m_inten.WINMON;
+#endif
 					break;
 				}
 				case SEESAW_ADC_WINMODE:{
+#ifndef SAMD51
 					ADC->WINCTRL.reg = req.getValue();
+#else
+					ADC0->WINCTRL.reg = req.getValue();
+#endif
 					break;
 				}
 				default:
@@ -285,8 +297,13 @@ seesaw_adc_read:
 		case ADC_WRITE_WINMON_REQ: {
 			LOG_EVENT(e);
 			ADCWriteWinmonThresh const &req = static_cast<ADCWriteWinmonThresh const &>(*e);
+#ifndef SAMD51
 			ADC->WINLT.reg = req.getLower();
 			ADC->WINUT.reg = req.getUpper();
+#else
+			ADC0->WINLT.reg = req.getLower();
+			ADC0->WINUT.reg = req.getUpper();
+#endif
 			status = Q_HANDLED();
 			break;
 		}
