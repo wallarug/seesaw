@@ -33,6 +33,9 @@
 //#include <stdint.h>
 #include "qpcpp.h"
 //#include "samd21.h"
+#ifdef SAMD51
+#include "samd51.h"
+#endif
 
 #define BSP_TICKS_PER_SEC            (1000)
 #define BSP_MSEC_PER_TICK            (1000 / BSP_TICKS_PER_SEC)
