@@ -3,14 +3,14 @@
 /// @ingroup qep
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.8.0
-/// Last updated on  2020-01-27
+/// Last updated for version 5.9.4
+/// Last updated on  2017-07-05
 ///
-///                    Q u a n t u m  L e a P s
-///                    ------------------------
-///                    Modern Embedded Software
+///                    Q u a n t u m     L e a P s
+///                    ---------------------------
+///                    innovating embedded systems
 ///
-/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
+/// Copyright (C) Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -28,76 +28,80 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <www.gnu.org/licenses>.
+/// along with this program. If not, see <http://www.gnu.org/licenses/>.
 ///
 /// Contact information:
-/// <www.state-machine.com/licensing>
-/// <info@state-machine.com>
+/// https://state-machine.com
+/// mailto:info@state-machine.com
 ///***************************************************************************
 /// @endcond
 
-#ifndef QEP_HPP
-#define QEP_HPP
+#ifndef qep_h
+#define qep_h
 
 //****************************************************************************
-//! The current QP version as a decimal constant XXYZ, where XX is a 2-digit
+//! The current QP version as a decimal constant XYZ, where X is a 1-digit
 // major version number, Y is a 1-digit minor version number, and Z is
 // a 1-digit release number.
-#define QP_VERSION      680U
+#define QP_VERSION      594
 
-//! The current QP version number string of the form XX.Y.Z, where XX is
-// a 2-digit major version number, Y is a 1-digit minor version number,
+//! The current QP version number string of the form X.Y.Z, where X is
+// a 1-digit major version number, Y is a 1-digit minor version number,
 // and Z is a 1-digit release number.
-#define QP_VERSION_STR  "6.8.0"
+#define QP_VERSION_STR  "5.9.4"
 
-//! Encrypted  current QP release (6.8.0) and date (2020-03-31)
-#define QP_RELEASE      0x8897E7A7U
-
+//! Tamperproof current QP release (5.9.4) and date (2017-07-07)
+#define QP_RELEASE      0x9A402B7DU
 
 //****************************************************************************
 #ifndef Q_SIGNAL_SIZE
     //! The size (in bytes) of the signal of an event. Valid values:
-    //! 1U, 2U, or 4U; default 2U
+    //! 1, 2, or 4; default 1
     /// @description
-    /// This macro can be defined in the QEP port file (qep_port.hpp) to
+    /// This macro can be defined in the QEP port file (qep_port.h) to
     /// configure the QP::QSignal type. When the macro is not defined, the
-    /// default of 2 bytes is applied.
-    #define Q_SIGNAL_SIZE 2U
+    /// default of 1 byte is chosen.
+    #define Q_SIGNAL_SIZE 2
 #endif
 
 //****************************************************************************
-// Aliases for basic numerical types; MISRA-C++ 2008 rule 3-9-2(req).
+//! helper macro to calculate static dimension of a 1-dim array @p array_
+#define Q_DIM(array_) (sizeof(array_) / sizeof((array_)[0]))
 
-//! alias for characters and character strings.
+//****************************************************************************
+// typedefs for basic numerical types; MISRA-C++ 2008 rule 3-9-2(req).
+
+//! typedef for character strings.
 /// @description
-/// This alias specifies character type for exclusive use in character
+/// This typedef specifies character type for exclusive use in character
 /// strings. Use of this type, rather than plain 'char', is in compliance
 /// with the MISRA-C 2004 Rules 6.1(req), 6.3(adv).
-using char_t = char;
+typedef char char_t;
 
-//! alias for line numbers in assertions and return from QF::run()
-using int_t = int;
+//! typedef for line numbers in assertions and return from QF_run()
+typedef int int_t;
 
-//! alias for enumerations used for event signals
-using enum_t = int;
+//! typedef for enumerations used for event signals
+typedef int enum_t;
 
-//! alias for 32-bit IEEE 754 floating point numbers
+//! typedef for 32-bit IEEE 754 floating point numbers
 /// @note
 /// QP does not use floating-point types anywhere in the internal
 /// implementation, except in QS software tracing, where utilities for
 /// output of floating-point numbers are provided for application-level
 /// trace records.
 ///
-using float32_t = float;
+typedef float float32_t;
 
-//! alias for 64-bit IEEE 754 floating point numbers
+//! typedef for 64-bit IEEE 754 floating point numbers
 /// @note
 /// QP does not use floating-point types anywhere in the internal
 /// implementation, except in QS software tracing, where utilities for
 /// output of floating-point numbers are provided for application-level
 /// trace records.
 ///
-using float64_t = double;
+typedef double float64_t;
+
 
 //! Perform downcast of an event onto a subclass of QEvt @p class_
 /// @description
@@ -121,7 +125,8 @@ using float64_t = double;
 /// This macro encapsulates the ugly casting of enumerated signals
 /// to QSignal and constants for QEvt.poolID and QEvt.refCtr_.
 ///
-#define QEVT_INITIALIZER(sig_) { static_cast<QP::QSignal>(sig_), 0U, 0U }
+#define QEVT_INITIALIZER(sig_) { static_cast<QP::QSignal>(sig_), \
+    static_cast<uint8_t>(0), static_cast<uint8_t>(0) }
 
 
 //****************************************************************************
@@ -129,12 +134,12 @@ using float64_t = double;
 /// @ingroup qep qf qs qv qk qxk
 namespace QP {
 
-    //! the current QP version number string based on QP_VERSION_STR
-    constexpr char_t const versionStr[]{QP_VERSION_STR};
+//! the current QP version number string based on QP_VERSION_STR
+extern char_t const versionStr[6];
 
-#if (Q_SIGNAL_SIZE == 1U)
-    using QSignal = std::uint8_t;
-#elif (Q_SIGNAL_SIZE == 2U)
+#if (Q_SIGNAL_SIZE == 1)
+    typedef uint8_t QSignal;
+#elif (Q_SIGNAL_SIZE == 2)
     //! QSignal represents the signal of an event.
     /// @description
     /// The relationship between an event and a signal is as follows. A signal
@@ -143,11 +148,11 @@ namespace QP {
     /// conveys the type of the occurrence--what happened?) However, an event
     /// can also contain additional quantitative information about the
     /// occurrence in form of event parameters.
-    using QSignal = std::uint16_t;
-#elif (Q_SIGNAL_SIZE == 4U)
-    using QSignal = std::uint32_t;
+    typedef uint16_t QSignal;
+#elif (Q_SIGNAL_SIZE == 4)
+    typedef uint32_t QSignal;
 #else
-    #error "Q_SIGNAL_SIZE defined incorrectly, expected 1U, 2U, or 4U"
+    #error "Q_SIGNAL_SIZE defined incorrectly, expected 1, 2, or 4"
 #endif
 
 #ifdef Q_EVT_CTOR // Provide the constructor for the QEvt class?
@@ -156,40 +161,39 @@ namespace QP {
     class QEvt {
     public:
         //! public constructor (dynamic event)
-        QEvt(QSignal const s) noexcept
-          : sig(s)
-          // poolId_/refCtr_ intentionally uninitialized
-        {}
-        enum StaticEvt : std::uint8_t { STATIC_EVT };
+        QEvt(QSignal const s) // poolId_/refCtr_ intentionally uninitialized
+          : sig(s) {}
+
+        enum StaticEvt { STATIC_EVT };
 
         //! public constructor (static event)
-        QEvt(QSignal const s, StaticEvt /*dummy*/) noexcept
+        QEvt(QSignal const s, StaticEvt /*dummy*/)
           : sig(s),
-            poolId_(0U),
-            refCtr_(0U))
+            poolId_(static_cast<uint8_t>(0)),
+            refCtr_(static_cast<uint8_t>(0))
         {}
 
 #ifdef Q_EVT_VIRTUAL
         //! virtual destructor
-        virtual ~QEvt() noexcept {}
+        virtual ~QEvt() {}
 #endif // Q_EVT_VIRTUAL
 
     public:
         QSignal sig; //!< signal of the event instance
 
     private:
-        std::uint8_t poolId_;          //!< pool ID (0 for static event)
-        std::uint8_t volatile refCtr_; //!< reference counter
+        uint8_t poolId_;          //!< pool ID (0 for static event)
+        uint8_t volatile refCtr_; //!< reference counter
 
         friend class QF;
         friend class QActive;
         friend class QMActive;
         friend class QTimeEvt;
         friend class QEQueue;
-        friend class QTicker;
-        friend class QXThread;
-        friend std::uint8_t QF_EVT_POOL_ID_ (QEvt const * const e);
-        friend std::uint8_t QF_EVT_REF_CTR_ (QEvt const * const e);
+        friend class QXThread;      // Gallium - fix bug
+        friend class QTicker;       // Gallium - fix bug
+        friend uint8_t QF_EVT_POOL_ID_ (QEvt const * const e);
+        friend uint8_t QF_EVT_REF_CTR_ (QEvt const * const e);
         friend void QF_EVT_REF_CTR_INC_(QEvt const * const e);
         friend void QF_EVT_REF_CTR_DEC_(QEvt const * const e);
     };
@@ -207,41 +211,78 @@ namespace QP {
     /// inheriting from the QEvt class.
     /// @include qep_qevt.cpp
     struct QEvt {
-        QSignal sig;                   //!< signal of the event instance
-        std::uint8_t poolId_;          //!< pool ID (0 for static event)
-        std::uint8_t volatile refCtr_; //!< reference counter
+        QSignal sig;              //!< signal of the event instance
+        uint8_t poolId_;          //!< pool ID (0 for static event)
+        uint8_t volatile refCtr_; //!< reference counter
     };
 
 #endif // Q_EVT_CTOR
 
+
+//! Type returned from state-handler functions
+typedef uint_fast8_t QState;
+
+//! pointer to state-handler function
+typedef QState (*QStateHandler)(void * const me, QEvt const * const e);
+
+//! pointer to an action-handler function
+typedef QState (*QActionHandler)(void * const me);
+
 // forward declarations...
 struct QMState;
 struct QMTranActTable;
-class QXThread;
-
-//! Type returned from state-handler functions
-using QState = std::uint_fast8_t;
-
-//! Pointer to state-handler function
-using QStateHandler = QState (*)(void * const me, QEvt const * const e);
-
-//! Pointer to an action-handler function
-using QActionHandler = QState (*)(void * const me);
-
-//! Pointer to a thread-handler function
-using QXThreadHandler = void (*)(QXThread * const me);
 
 //! Attribute of for the QHsm class (Hierarchical State Machine).
 /// @description
 /// This union represents possible values stored in the 'state' and 'temp'
 /// attributes of the QHsm and QMsm classes.
 union QHsmAttr {
-    QStateHandler   fun;          //!< pointer to a state handler function
-    QActionHandler  act;          //!< pointer to an action-handler function
-    QXThreadHandler thr;          //!< pointer to an thread-handler function
-    QMState         const *obj;   //!< pointer to QMState object
-    QMTranActTable  const *tatbl; //!< transition-action table
+    QStateHandler  fun;           //!< pointer to a state handler function
+    QActionHandler act;           //!< pointer to an action-handler function
+    QMState        const *obj;    //!< pointer to QMState object
+    QMTranActTable const *tatbl;  //!< transition-action table
 };
+
+//****************************************************************************
+
+//! event passed to the superstate to handle
+QState const Q_RET_SUPER     = static_cast<QState>(0);
+
+//! event passed to submachine superstate
+QState const Q_RET_SUPER_SUB = static_cast<QState>(1);
+
+//! event unhandled due to a guard evaluating to FALSE
+QState const Q_RET_UNHANDLED = static_cast<QState>(2);
+
+//! event handled (internal transition)
+QState const Q_RET_HANDLED   = static_cast<QState>(3);
+
+//! event silently ignored (bubbled up to top)
+QState const Q_RET_IGNORED   = static_cast<QState>(4);
+
+//! state entry action executed
+QState const Q_RET_ENTRY     = static_cast<QState>(5);
+
+//! state exit  action executed
+QState const Q_RET_EXIT      = static_cast<QState>(6);
+
+//! return value without any effect
+QState const Q_RET_NULL      = static_cast<QState>(7);
+
+//! regular transition taken
+QState const Q_RET_TRAN      = static_cast<QState>(8);
+
+//! initial transition taken
+QState const Q_RET_TRAN_INIT = static_cast<QState>(9);
+
+//! event handled (transition to history)
+QState const Q_RET_TRAN_HIST = static_cast<QState>(10);
+
+//! entry-point transition into a submachine
+QState const Q_RET_TRAN_EP   = static_cast<QState>(11);
+
+//! exit-point transition out of a submachine
+QState const Q_RET_TRAN_XP   = static_cast<QState>(12);
 
 
 //****************************************************************************
@@ -272,204 +313,167 @@ class QHsm {
 
 public:
     //! virtual destructor
-    virtual ~QHsm() noexcept;
+    virtual ~QHsm();
 
-    //! executes the top-most initial transition in QP::QHsm
-    virtual void init(void const * const e);
-
-    //! overloaded init(void)
-    virtual void init(void) { this->init(nullptr); }
+    //! Executes the top-most initial transition in QP::QHsm
+    virtual void init(QEvt const * const e);
+    virtual void init(void) { this->init(static_cast<QEvt const *>(0)); }
 
     //! Dispatches an event to QHsm
     virtual void dispatch(QEvt const * const e);
 
     //! Tests if a given state is part of the current active state
     //! configuration
-    bool isIn(QStateHandler const s) noexcept;
+    bool isIn(QStateHandler const s);
+
+    //! the top-state.
+    static QState top(void * const me, QEvt const * const e);
 
     //! Obtain the current state (state handler function)
     //! @note used in the QM code generation
-    QStateHandler state(void) const noexcept {
+    QStateHandler state(void) const {
         return m_state.fun;
     }
 
     //! Obtain the current active child state of a given parent
     //! @note used in the QM code generation
-    QStateHandler childState(QStateHandler const parent) noexcept;
-
-    //! the top-state.
-    static QState top(void * const me, QEvt const * const e) noexcept;
+    QStateHandler childState(QStateHandler const parent);
 
 protected:
     //! Protected constructor of QHsm.
-    QHsm(QStateHandler const initial) noexcept;
+    QHsm(QStateHandler const initial);
 
-public:
-// facilities for the QHsm implementation strategy...
-    //! event passed to the superstate to handle
-    static constexpr QState Q_RET_SUPER     {0};
+public: // facilities for coding HSMs...
+    //! internal helper function to specify the return of a state-handler
+    //! when it handles the event.
+    static QState Q_HANDLED(void) {
+        return Q_RET_HANDLED;
+    }
 
-    //! event passed to submachine superstate
-    static constexpr QState Q_RET_SUPER_SUB {1};
+    //! internal helper function to specify the return of a state-handler
+    //! function when it attempts to handle the event but a guard condition
+    //! evaluates to false and there is no other explicit way of handling
+    //! the event.
+    static QState Q_UNHANDLED(void) {
+        return Q_RET_UNHANDLED;
+    }
 
-    //! event unhandled due to a guard evaluating to 'false'
-    static constexpr QState Q_RET_UNHANDLED {2};
-
-    //! event handled (internal transition)
-    static constexpr QState Q_RET_HANDLED   {3};
-
-    //! event silently ignored (bubbled up to top)
-    static constexpr QState Q_RET_IGNORED   {4};
-
-    //! state entry action executed
-    static constexpr QState Q_RET_ENTRY     {5};
-
-    //! state exit  action executed
-    static constexpr QState Q_RET_EXIT      {6};
-
-    //! return value without any effect
-    static constexpr QState Q_RET_NULL      {7};
-
-    //! regular transition taken
-    static constexpr QState Q_RET_TRAN      {8};
-
-    //! initial transition taken
-    static constexpr QState Q_RET_TRAN_INIT {9};
-
-    //! entry-point transition into a submachine
-    static constexpr QState Q_RET_TRAN_EP   {10};
-
-    //! transition to history of a given state
-    static constexpr QState Q_RET_TRAN_HIST {11};
-
-    //! exit-point transition out of a submachine
-    static constexpr QState Q_RET_TRAN_XP   {12};
-
-protected:
-    //! Helper function to specify a state transition
-    QState tran(QStateHandler const target) noexcept {
+    //! internal helper function to record a state transition
+    QState tran_(QStateHandler const target) {
         m_temp.fun = target;
         return Q_RET_TRAN;
     }
 
-    //! Helper function to specify a transition to history
-    QState tran_hist(QStateHandler const hist) noexcept {
+    //! internal helper function to record a transition to history
+    QState tran_hist_(QStateHandler const hist) {
         m_temp.fun = hist;
         return Q_RET_TRAN_HIST;
     }
 
-    //! Helper function to specify the superstate of a given state
-    QState super(QStateHandler const superstate) noexcept {
+    //! internal helper function to record the superstate
+    QState super_(QStateHandler const superstate) {
         m_temp.fun = superstate;
         return Q_RET_SUPER;
     }
 
-    enum ReservedHsmSignals : QSignal {
+    enum ReservedHsmSignals {
         Q_ENTRY_SIG = 1,     //!< signal for entry actions
         Q_EXIT_SIG,          //!< signal for exit actions
         Q_INIT_SIG           //!< signal for nested initial transitions
     };
 
-// protected facilities for the QMsm implementation strategy...
-    //! Helper function to specify a regular state transition
-    //! in a QM state-handler
-    QState qm_tran(void const * const tatbl) noexcept {
-        m_temp.tatbl = static_cast<QP::QMTranActTable const *>(tatbl);
+// protected facilities for coding MSMs...
+    //! internal helper function to record a regular state transition
+    QState qm_tran_(QMTranActTable const * const tatbl) {
+        m_temp.tatbl = tatbl;
         return Q_RET_TRAN;
     }
 
-    //! Helper function to specifiy a transition to history
-    //! in  a QM state-handler
-    QState qm_tran_hist(QMState const * const hist,
-                        void const * const tatbl) noexcept
+    //! Internal helper function to record a regular state transition
+    QState qm_tran_hist_(QMState const * const hist,
+                         QMTranActTable const * const tatbl)
     {
         m_state.obj  = hist;
-        m_temp.tatbl = static_cast<QP::QMTranActTable const *>(tatbl);
+        m_temp.tatbl = tatbl;
         return Q_RET_TRAN_HIST;
     }
 
-    //! Helper function to specify an initial state transition
-    //! in a QM state-handler
-    QState qm_tran_init(void const * const tatbl) noexcept {
-        m_temp.tatbl = static_cast<QP::QMTranActTable const *>(tatbl);
+    //! Internal helper function to record an initial state transition
+    QState qm_tran_init_(QMTranActTable const * const tatbl) {
+        m_temp.tatbl = tatbl;
         return Q_RET_TRAN_INIT;
     }
 
-    //! Helper function to specify a transition to an entry point
-    //! to a submachine state in a QM state-handler
-    QState qm_tran_ep(void const * const tatbl) noexcept {
-        m_temp.tatbl = static_cast<QP::QMTranActTable const *>(tatbl);
+    //! Internal helper function to record an transition to an entry point
+    //! to a submachine state
+    QState qm_tran_ep_(QMTranActTable const * const tatbl) {
+        m_temp.tatbl = tatbl;
         return Q_RET_TRAN_EP;
     }
 
-    //! Helper function to specify a transition to an exit point
-    //! from a submachine state in a QM state-handler
-    QState qm_tran_xp(QActionHandler const xp,
-                      void const *const tatbl) noexcept
+    //! Internal helper function to record an transition to an exit point
+    //! from a submachine state
+    QState qm_tran_xp_(QActionHandler const xp,
+                       QMTranActTable const *const tatbl)
     {
         m_state.act = xp;
-        m_temp.tatbl = static_cast<QP::QMTranActTable const *>(tatbl);
+        m_temp.tatbl = tatbl;
         return Q_RET_TRAN_XP;
     }
 
-#ifdef Q_SPY
-    //! Helper function to specify a state entry in a QM state-handler
-    QState qm_entry(QMState const * const s) noexcept {
-        m_temp.obj = s;
+    //! Internal helper function to record a state entry
+    QState qm_entry_(QMState const * const s) {
+        m_temp.obj  = s;
         return Q_RET_ENTRY;
     }
 
-    //! Helper function to specify a state exit in a QM state-handler
-    QState qm_exit(QMState const * const s) noexcept {
-        m_temp.obj = s;
-        return Q_RET_EXIT;
-    }
-#else
-    //! Helper function to specify a state entry in a QM state-handler
-    QState qm_entry(QMState const * const s) noexcept {
-        (void)s;
-        return Q_RET_ENTRY;
-    }
-
-    //! Helper function to specify a state exit in a QM state-handler
-    QState qm_exit(QMState const * const s) noexcept {
-        (void)s;
-        return Q_RET_EXIT;
-    }
-#endif
-
-    //! Helper function to specify a submachine exit in a QM state-handler
-    QState qm_sm_exit(QMState const * const s) noexcept {
-        m_temp.obj = s;
+    //! Internal helper function to record a state exit
+    QState qm_exit_(QMState const * const s) {
+        m_temp.obj  = s;
         return Q_RET_EXIT;
     }
 
-    //! Helper function to call in a QM state-handler when it passes
-    //! the event to the host submachine state to handle an event.
-    QState qm_super_sub(QMState const * const s) noexcept {
-        m_temp.obj = s;
+    //! Internal helper function to call in a QM action-handler when
+    //! it passes the event to the host submachine state to handle an event.
+    QState qm_super_sub_(QMState const * const s) {
+        m_temp.obj  = s;
         return Q_RET_SUPER_SUB;
     }
 
-private:
-    //!< maximum nesting depth of states in HSM
-    static constexpr std::int_fast8_t MAX_NEST_DEPTH_{6};
+    //! Internal helper function to call in a QM action-handler when
+    //! it handles an event.
+    static QState QM_HANDLED(void) {
+        return Q_RET_HANDLED;
+    }
 
-    //! internal helper function to take a transition in QP::QHsm
-    std::int_fast8_t hsm_tran(QStateHandler (&path)[MAX_NEST_DEPTH_]);
+    //! Macro to call in a QM action-handler when it does not handle
+    //! an event due to a guard condition evaluating to false.
+    static QState QM_UNHANDLED(void) {
+        return Q_RET_UNHANDLED;
+    }
+
+    //! Internal helper function to call in a QM action-handler when
+    //! it passes the event to the superstate for processing.
+    static QState QM_SUPER(void) {
+        return Q_RET_SUPER;
+    }
+
+private:
+    enum {
+        MAX_NEST_DEPTH_ = 6  //!< maximum nesting depth of states in HSM
+    };
+
+    //! internal helper function to take a transition
+    int_fast8_t hsm_tran(QStateHandler (&path)[MAX_NEST_DEPTH_]);
 
     friend class QMsm;
     friend class QActive;
     friend class QMActive;
     friend class QF;
-    friend class QS;
     friend class QXK;
     friend class QXThread;
     friend class QXMutex;
     friend class QXSemaphore;
-#ifdef Q_UTEST
-    friend class QActiveDummy;
-#endif // Q_UTEST
 };
 
 //****************************************************************************
@@ -494,56 +498,39 @@ class QMsm : public QHsm {
 public:
     //! Performs the second step of SM initialization by triggering
     /// the top-most initial transition.
-    void init(void const * const e) override;
-    void init(void) override { this->init(nullptr); }
+    virtual void init(QEvt const * const e);
+    virtual void init(void) { this->init(static_cast<QEvt const *>(0)); }
 
     //! Dispatches an event to a HSM
-    void dispatch(QEvt const * const e) override;
+    virtual void dispatch(QEvt const * const e);
 
     //! Tests if a given state is part of the active state configuration
-    bool isInState(QMState const * const st) const noexcept;
+    bool isInState(QMState const *st) const;
 
     //! Return the current active state object (read only)
-    QMState const *stateObj(void) const noexcept {
+    QMState const *stateObj(void) const {
         return m_state.obj;
     }
 
     //! Obtain the current active child state of a given parent (read only)
-    QMState const *childStateObj(QMState const * const parent) const noexcept;
+    QMState const *childStateObj(QMState const * const parent) const;
 
 protected:
-    //! Protected constructor
-    QMsm(QStateHandler const initial) noexcept;
+    //! Protected constructor of QMsm
+    QMsm(QStateHandler const initial);
 
 private:
-    //! disallow the inhertited isIn() function in QP::QMsm and subclasses
-    //! @sa QP::QMsm::isInState()
-    bool isIn(QStateHandler const s) noexcept = delete;
-
-    //! disallow the inhertited state() function in QP::QMsm and subclasses
-    //! @sa QP::QMsm::stateObj()
-    QStateHandler state(void) const noexcept = delete;
-
-    //! disallow the inhertited childState() function in QP::QMsm and subclasses
-    //! @sa QP::QMsm::childStateObj()
-    QStateHandler childState(QStateHandler const parent) noexcept = delete;
-
-    //! disallow the inhertited top() function in QP::QMsm and subclasses
-    //! @sa QP::QMsm::msm_top_s
-    static QState top(void * const me, QEvt const * const e) noexcept = delete;
-
     //! Internal helper function to execute a transition-action table
     QState execTatbl_(QMTranActTable const * const tatbl);
 
     //! Internal helper function to exit current state to transition source
-    void exitToTranSource_(QMState const *s,
-                           QMState const * const ts);
+    void exitToTranSource_(QMState const *s, QMState const * const ts);
 
     //! Internal helper function to enter state history
     QState enterHistory_(QMState const * const hist);
 
     //! maximum depth of implemented entry levels for transitions to history
-    static constexpr std::int_fast8_t MAX_ENTRY_DEPTH_ {4};
+    static int_fast8_t const MAX_ENTRY_DEPTH_ = static_cast<int_fast8_t>(4);
 
     //! the top state object for the QMsm
     static QMState const msm_top_s;
@@ -551,15 +538,19 @@ private:
     friend class QMActive;
 };
 
-//! State object for the QP::QMsm class (QM State Machine).
+//! Top-most state of QMSM is NULL
+QMState * const QMsm_top = static_cast<QMState *>(0);
+
+
+//! State object for the QMsm class (Meta State Machine).
 /// @description
-/// This class groups together the attributes of a QP::QMsm state, such as
-/// the parent state (state nesting), the associated state handler function
-/// and the exit action handler function. These attributes are used inside
-/// the QP::QMsm::dispatch() and QP::QMsm::init() functions.
+/// This class groups together the attributes of a QMsm state, such as the
+/// parent state (state nesting), the associated state handler function and
+/// the exit action handler function. These attributes are used inside the
+/// QP::QMsm::dispatch() and QP::QMsm::init() functions.
 ///
 /// @attention
-/// The QP::QMState class is only intended for the QM code generator and
+/// The QMStateObj class is only intended for the QM code generator and
 /// should not be used in hand-crafted code.
 struct QMState {
     QMState        const *superstate;   //!< superstate of this state
@@ -569,7 +560,7 @@ struct QMState {
     QActionHandler const initAction;    //!< init action handler function
 };
 
-//! Transition-Action Table for the QP::QMsm State Machine.
+//! Transition-Action Table for the Meta State Machine.
 struct QMTranActTable {
     QMState        const *target;
     QActionHandler const act[1];
@@ -581,40 +572,19 @@ struct QMTranActTable {
 class QEP {
 public:
     //! get the current QEP version number string of the form "X.Y.Z"
-    static char_t const *getVersion(void) noexcept {
+    static char_t const *getVersion(void) {
         return versionStr;
     }
 };
 
 //! Offset or the user signals
-constexpr enum_t Q_USER_SIG {4};
+enum_t const Q_USER_SIG = static_cast<enum_t>(4);
 
 } // namespace QP
 
 //****************************************************************************
-// Macros for coding QHsm-style state machines...
 
-//! Macro to generate a declaration of a state-handler, state-caller and
-//! a state-object for a given state in a subclass of QP::QHsm.
-#define Q_STATE_DECL(state_) \
-    QP::QState state_ ## _h(QP::QEvt const * const e); \
-    static QP::QState state_(void * const me, QP::QEvt const * const e)
-
-//! Macro to generate a definition of a state-handler for a given state
-//! in a subclass of QP::QHsm.
-#define Q_STATE_DEF(subclass_, state_) \
-    QP::QState subclass_::state_(void * const me, QP::QEvt const * const e) {\
-        return static_cast<subclass_ *>(me)->state_ ## _h(e); } \
-    QP::QState subclass_::state_ ## _h(QP::QEvt const * const e)
-
-//! Macro to specify that the event was handled
-#define Q_HANDLED()           (Q_RET_HANDLED)
-
-//! Macro to specify that the event was NOT handled
-//! due to a guard condition evaluating to 'false'
-#define Q_UNHANDLED()         (Q_RET_UNHANDLED)
-
-//! Macro to perform casting to QStateHandler.
+//! Perform cast to QStateHandler.
 /// @description
 /// This macro encapsulates the cast of a specific state handler function
 /// pointer to QStateHandler, which violates MISRA-C 2004 rule 11.4(advisory).
@@ -622,68 +592,74 @@ constexpr enum_t Q_USER_SIG {4};
 #define Q_STATE_CAST(handler_) \
     (reinterpret_cast<QP::QStateHandler>(handler_))
 
-//! Macro to perform casting to QActionHandler.
+//! Perform cast to QActionHandler.
 /// @description
 /// This macro encapsulates the cast of a specific action handler function
 /// pointer to QActionHandler, which violates MISRA-C2004 rule 11.4(advisory).
 /// This macro helps to localize this deviation.
-#define Q_ACTION_CAST(act_)   (reinterpret_cast<QP::QActionHandler>(act_))
+#define Q_ACTION_CAST(action_) \
+    (reinterpret_cast<QP::QActionHandler>(action_))
 
-//! Macro to provide strictly-typed zero-action to terminate action lists
-//! in the transition-action-tables
-#define Q_ACTION_NULL         (nullptr)
+#ifdef Q_SPY
+    //! Macro to call in a QM state entry-handler. Applicable only to QMSMs.
+    #define QM_ENTRY(state_)  (me->qm_entry_((state_)))
+
+    //! Macro to call in a QM state exit-handler. Applicable only to QMSMs.
+    #define QM_EXIT(state_)   (me->qm_exit_((state_)))
+#else
+    #define QM_ENTRY(dummy)   (QP::Q_RET_ENTRY)
+    #define QM_EXIT(dummy)    (QP::Q_RET_EXIT)
+#endif
+
+//! Macro to call in a QM submachine exit-handler. Applicable only to QMSMs.
+#define QM_SM_EXIT(state_)   (me->qm_exit_((state_)))
+
+//! Macro to call in a QM state-handler when it executes a regular
+//! transition. Applicable only to QMSMs.
+#define QM_TRAN(tatbl_) \
+    (me->qm_tran_(reinterpret_cast<QP::QMTranActTable const *>(tatbl_)))
+
+//! Macro to call in a QM state-handler when it executes an initial
+//! transition. Applicable only to QMSMs.
+#define QM_TRAN_INIT(tatbl_) \
+    (me->qm_tran_init_(reinterpret_cast<QP::QMTranActTable const *>(tatbl_)))
+
+//! Macro to call in a QM state-handler when it executes a transition
+//! to history. Applicable only to QMSMs.
+#define QM_TRAN_HIST(history_, tatbl_) \
+    (me->qm_tran_hist_((history_), \
+     reinterpret_cast<QP::QMTranActTable const *>(tatbl_)))
+
+//! Macro to call in a QM state-handler when it executes an initial
+//! transition. Applicable only to QMSMs.
+#define QM_TRAN_EP(tatbl_) \
+    (me->qm_tran_ep_(reinterpret_cast<QP::QMTranActTable const *>(tatbl_)))
+
+//! Macro to call in a QM state-handler when it executes a transition
+//! to exit point. Applicable only to QMSMs.
+#define QM_TRAN_XP(xp_, tatbl_) \
+    (me->qm_tran_xp_((xp_), \
+        reinterpret_cast<QP::QMTranActTable const *>(tatbl_)))
+
+//! Designates the superstate of a given state in an MSM.
+#define QM_SUPER_SUB(state_)   (me->qm_super_sub_((state_)))
 
 
-//****************************************************************************
-// Macros for coding QMsm-style state machines...
+//! Designates a target for an initial or regular transition.
+//! Q_TRAN() can be used both in the FSMs and HSMs.
+/// @usage
+/// @include qep_qtran.cpp
+#define Q_TRAN(target_)       (me->tran_(Q_STATE_CAST(target_)))
 
-//! Macro to generate a declaration of a state-handler, state-caller and
-//! a state-object for a given state in a subclass of QP::QMsm.
-#define QM_STATE_DECL(state_) \
-    QP::QState state_ ## _h(QP::QEvt const * const e); \
-    static QP::QState state_(void * const me, QP::QEvt const * const e); \
-    static QP::QMState const state_ ## _s
+//! Designates a target for an initial or regular transition.
+//! Q_TRAN() can be used both in the FSMs and HSMs.
+/// @usage
+/// @include qep_qtran.cpp
+#define Q_TRAN_HIST(hist_)    (me->tran_hist_((hist_)))
 
-//! Macro to generate a declaration of a state-handler, state-caller and
-//! a state-object for a given *submachine* state in a subclass of QP::QMsm.
-#define QM_SM_STATE_DECL(subm_, state_) \
-    QP::QState state_ ## _h(QP::QEvt const * const e); \
-    static QP::QState state_(void * const me, QP::QEvt const * const e); \
-    static SM_ ## subm_ const state_ ## _s
+//! Designates the superstate of a given state in an HSM.
+/// @usage
+/// @include qep_qhsm.cpp
+#define Q_SUPER(state_)       (me->super_(Q_STATE_CAST(state_)))
 
-//! Macro to generate a declaration of an action-handler and action-caller
-//! in a subclass of QP::QMsm.
-#define QM_ACTION_DECL(action_) \
-    QP::QState action_ ## _h(void); \
-    static QP::QState action_(void * const me)
-
-//! Macro to generate a definition of a state-caller and state-handler
-//! for a given state in a subclass of QP::QMsm.
-#define QM_STATE_DEF(subclass_, state_) \
-    QP::QState subclass_::state_(void * const me, QP::QEvt const * const e) {\
-        return static_cast<subclass_ *>(me)->state_ ## _h(e); } \
-    QP::QState subclass_::state_ ## _h(QP::QEvt const * const e)
-
-//! Macro to generate a definition of an action-caller and action-handler
-//! in a subclass of QP::QMsm.
-#define QM_ACTION_DEF(subclass_, action_) \
-    QP::QState subclass_::action_(void * const me) { \
-        return static_cast<subclass_ *>(me)->action_ ## _h(); } \
-    QP::QState subclass_::action_ ## _h(void)
-
-//! Macro for a QM action-handler when it handles the event.
-#define QM_HANDLED()          (Q_RET_HANDLED)
-
-//! Macro for a QM action-handler when it does not handle the event
-//! due to a guard condition evaluating to false.
-#define QM_UNHANDLED()        (Q_RET_UNHANDLED)
-
-//! Macro for a QM action-handler when it passes the event to the superstate
-#define QM_SUPER()            (Q_RET_SUPER)
-
-//! Macro to provide strictly-typed zero-state to use for submachines.
-//! Applicable to suclasses of QP::QMsm.
-#define QM_STATE_NULL         (nullptr)
-
-#endif // QEP_HPP
-
+#endif // qep_h

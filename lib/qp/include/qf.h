@@ -3,14 +3,14 @@
 /// @ingroup qf
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.8.0
-/// Last updated on  2020-01-13
+/// Last updated for version 5.9.3
+/// Last updated on  2017-06-18
 ///
-///                    Q u a n t u m  L e a P s
-///                    ------------------------
-///                    Modern Embedded Software
+///                    Q u a n t u m     L e a P s
+///                    ---------------------------
+///                    innovating embedded systems
 ///
-/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
+/// Copyright (C) Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -28,20 +28,20 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <www.gnu.org/licenses>.
+/// along with this program. If not, see <http://www.gnu.org/licenses/>.
 ///
 /// Contact information:
-/// <www.state-machine.com/licensing>
-/// <info@state-machine.com>
+/// https://state-machine.com
+/// mailto:info@state-machine.com
 ///***************************************************************************
 /// @endcond
 
-#ifndef QF_HPP
-#define QF_HPP
+#ifndef qf_h
+#define qf_h
 
 //****************************************************************************
-#ifndef QPSET_HPP
-#include "qpset.hpp"
+#ifndef qpset_h
+#include "qpset.h"
 #endif
 
 #ifdef Q_EVT_CTOR
@@ -52,65 +52,62 @@
 // apply defaults for all undefined configuration parameters
 //
 #ifndef QF_EVENT_SIZ_SIZE
-    //! Default value of the macro configurable value in qf_port.hpp
-    #define QF_EVENT_SIZ_SIZE    2U
+    //! Default value of the macro configurable value in qf_port.h
+    #define QF_EVENT_SIZ_SIZE    2
 #endif
 
 #ifndef QF_MAX_EPOOL
-    //! Default value of the macro configurable value in qf_port.hpp
-    #define QF_MAX_EPOOL         3U
+    //! Default value of the macro configurable value in qf_port.h
+    #define QF_MAX_EPOOL         3
 #endif
 
 #ifndef QF_MAX_TICK_RATE
-    //! Default value of the macro configurable value in qf_port.hpp
-    //! Valid values: [0U..15U]; default 1U
-    #define QF_MAX_TICK_RATE     1U
-#elif (QF_MAX_TICK_RATE > 15U)
-    #error "QF_MAX_TICK_RATE exceeds the maximum of 15U"
+    //! Default value of the macro configurable value in qf_port.h
+    #define QF_MAX_TICK_RATE     1
 #endif
 
 #ifndef QF_TIMEEVT_CTR_SIZE
     //! macro to override the default QTimeEvtCtr size.
-    //! Valid values 1U, 2U, or 4U; default 2U
-    #define QF_TIMEEVT_CTR_SIZE  2U
+    //! Valid values 1, 2, or 4; default 2
+    #define QF_TIMEEVT_CTR_SIZE  2
 #endif
 
 
 //****************************************************************************
 namespace QP {
 
-#if (QF_EVENT_SIZ_SIZE == 1U)
-    using QEvtSize = std::uint8_t;
-#elif (QF_EVENT_SIZ_SIZE == 2U)
+#if (QF_EVENT_SIZ_SIZE == 1)
+    typedef uint8_t QEvtSize;
+#elif (QF_EVENT_SIZ_SIZE == 2)
     //! The data type to store the block-size defined based on
     //! the macro #QF_EVENT_SIZ_SIZE.
     /// @description
     /// The dynamic range of this data type determines the maximum block
     /// size that can be managed by the pool.
-    using QEvtSize = std::uint16_t;
-#elif (QF_EVENT_SIZ_SIZE == 4U)
-    using QEvtSize = std::uint32_t;
+    typedef uint16_t QEvtSize;
+#elif (QF_EVENT_SIZ_SIZE == 4)
+    typedef uint32_t QEvtSize;
 #else
-    #error "QF_EVENT_SIZ_SIZE defined incorrectly, expected 1U, 2U, or 4U"
+    #error "QF_EVENT_SIZ_SIZE defined incorrectly, expected 1, 2, or 4"
 #endif
 
 //****************************************************************************
-#if (QF_TIMEEVT_CTR_SIZE == 1U)
-    using QTimeEvtCtr = std::uint8_t;
-#elif (QF_TIMEEVT_CTR_SIZE == 2U)
+#if (QF_TIMEEVT_CTR_SIZE == 1)
+    typedef uint8_t QTimeEvtCtr;
+#elif (QF_TIMEEVT_CTR_SIZE == 2)
     //! type of the Time Event counter, which determines the dynamic
     //! range of the time delays measured in clock ticks.
     /// @description
-    /// This alias is configurable via the preprocessor switch
+    /// This typedef is configurable via the preprocessor switch
     /// #QF_TIMEEVT_CTR_SIZE. The other possible values of this type are
     /// as follows: @n
-    /// std::uint8_t when (QF_TIMEEVT_CTR_SIZE == 1U), and @n
-    /// std::uint32_t when (QF_TIMEEVT_CTR_SIZE == 4U).
-    using QTimeEvtCtr = std::uint16_t;
-#elif (QF_TIMEEVT_CTR_SIZE == 4U)
-    using QTimeEvtCtr = std::uint32_t;
+    /// uint8_t when (QF_TIMEEVT_CTR_SIZE == 1), and @n
+    /// uint32_t when (QF_TIMEEVT_CTR_SIZE == 4).
+    typedef uint16_t QTimeEvtCtr;
+#elif (QF_TIMEEVT_CTR_SIZE == 4)
+    typedef uint32_t QTimeEvtCtr;
 #else
-    #error "QF_TIMEEVT_CTR_SIZE defined incorrectly, expected 1U, 2U, or 4U"
+    #error "QF_TIMEEVT_CTR_SIZE defined incorrectly, expected 1, 2, or 4"
 #endif
 
 class QEQueue; // forward declaration
@@ -176,129 +173,102 @@ public: // for access from extern "C" functions
     QF_THREAD_TYPE m_thread;
 #endif
 
-    //! QF priority (1..#QF_MAX_ACTIVE) of this active object.
-    std::uint8_t m_prio;
-
-#ifdef QXK_HPP // QXK kernel used?
-    //! QF start priority (1..#QF_MAX_ACTIVE) of this active object.
-    std::uint8_t m_startPrio;
-#endif
+    //! QF priority associated with the active object.
+    uint_fast8_t m_prio;
 
 protected:
     //! protected constructor (abstract class)
-    QActive(QStateHandler const initial) noexcept;
+    QActive(QStateHandler const initial);
 
 public:
     //! Starts execution of an active object and registers the object
     //! with the framework.
-    virtual void start(std::uint_fast8_t const prio,
-        QEvt const * * const qSto, std::uint_fast16_t const qLen,
-        void * const stkSto, std::uint_fast16_t const stkSize,
-        void const * const par);
+    virtual void start(uint_fast8_t const prio,
+                       QEvt const *qSto[], uint_fast16_t const qLen,
+                       void * const stkSto, uint_fast16_t const stkSize,
+                       QEvt const * const ie);
 
     //! Overloaded start function (no initialization event)
-    virtual void start(std::uint_fast8_t const prio,
-         QEvt const * * const qSto, std::uint_fast16_t const qLen,
-         void * const stkSto, std::uint_fast16_t const stkSize)
+    virtual void start(uint_fast8_t const prio,
+                       QEvt const *qSto[], uint_fast16_t const qLen,
+                       void * const stkSto, uint_fast16_t const stkSize)
     {
-        this->start(prio, qSto, qLen, stkSto, stkSize, nullptr);
+        this->start(prio, qSto, qLen, stkSto, stkSize,
+                    static_cast<QEvt const *>(0));
     }
-
-#ifdef QF_ACTIVE_STOP
-    //! Stops execution of an active object and removes it from the
-    //! framework's supervision.
-    void stop(void);
-#endif
 
 #ifndef Q_SPY
     //! Posts an event @p e directly to the event queue of the active
     //! object @p me using the First-In-First-Out (FIFO) policy.
-    virtual bool post_(QEvt const * const e,
-                       std::uint_fast16_t const margin) noexcept;
+    virtual bool post_(QEvt const * const e, uint_fast16_t const margin);
 #else
-    virtual bool post_(QEvt const * const e, std::uint_fast16_t const margin,
-                       void const * const sender) noexcept;
+    virtual bool post_(QEvt const * const e, uint_fast16_t const margin,
+                       void const * const sender);
 #endif
 
     //! Posts an event directly to the event queue of the active object
     //! using the Last-In-First-Out (LIFO) policy.
-    virtual void postLIFO(QEvt const * const e) noexcept;
+    virtual void postLIFO(QEvt const * const e);
 
     //! Un-subscribes from the delivery of all signals to the active object.
-    void unsubscribeAll(void) const noexcept;
+    void unsubscribeAll(void) const;
+
+    //! Stops execution of an active object and removes it from the
+    //! framework's supervision.
+    void stop(void);
 
     //! Subscribes for delivery of signal @p sig to the active object
-    void subscribe(enum_t const sig) const noexcept;
+    void subscribe(enum_t const sig) const;
 
     //! Un-subscribes from the delivery of signal @p sig to the active object.
-    void unsubscribe(enum_t const sig) const noexcept;
+    void unsubscribe(enum_t const sig) const;
 
     //! Defer an event to a given separate event queue.
-    bool defer(QEQueue * const eq, QEvt const * const e) const noexcept;
+    bool defer(QEQueue * const eq, QEvt const * const e) const;
 
     //! Recall a deferred event from a given event queue.
-    bool recall(QEQueue * const eq) noexcept;
+    bool recall(QEQueue * const eq);
 
     //! Flush the specified deferred queue 'eq'.
-    std::uint_fast16_t flushDeferred(QEQueue * const eq) const noexcept;
+    uint_fast16_t flushDeferred(QEQueue * const eq) const;
 
     //! Get the priority of the active object.
-    std::uint_fast8_t getPrio(void) const noexcept {
-        return static_cast<std::uint_fast8_t>(m_prio);
+    uint_fast8_t getPrio(void) const {
+        return m_prio;
     }
 
     //! Set the priority of the active object.
-    void setPrio(std::uint_fast8_t const prio) {
-        m_prio = static_cast<std::uint8_t>(prio);
+    void setPrio(uint_fast8_t const prio) {
+        m_prio = prio;
     }
-
-    //! Generic setting of additional attributes (useful in QP ports)
-    void setAttr(std::uint32_t attr1, void const *attr2 = nullptr);
 
 #ifdef QF_OS_OBJECT_TYPE
     //! accessor to the OS-object for extern "C" functions, such as
-    //! the QK or QXK schedulers
-    QF_OS_OBJECT_TYPE &getOsObject(void) noexcept { return m_osObject; }
+    //! the QK scheduler
+    QF_OS_OBJECT_TYPE &getOsObject(void) { return m_osObject; }
 #endif
 
 #ifdef QF_THREAD_TYPE
     //! accessor to the Thread for extern "C" functions, such as
-    //! the QK or QXK schedulers
-    QF_THREAD_TYPE &getThread(void) noexcept { return m_thread; }
+    //! the QK scheduler
+    QF_THREAD_TYPE &getThread(void) { return m_thread; }
 #endif
 
     //! Get an event from the event queue of an active object.
-    QEvt const *get_(void) noexcept;
+    QEvt const *get_(void);
 
-// duplicated API to be used exclusively inside ISRs (useful in some QP ports)
-#ifdef QF_ISR_API
-#ifdef Q_SPY
-    virtual bool postFromISR_(QEvt const * const e,
-        std::uint_fast16_t const margin, void *par,
-        void const * const sender) noexcept;
-#else
-    virtual bool postFromISR_(QEvt const * const e,
-        std::uint_fast16_t const margin, void *par) noexcept;
-#endif // Q_SPY
-#endif // QF_ISR_API
-
-// friendships...
-private:
     friend class QF;
     friend class QTimeEvt;
     friend class QTicker;
-#ifdef QK_HPP
+#ifdef qk_h
     friend class QMutex;
-#endif // QK_HPP
-#ifdef QXK_HPP
+#endif // qk_h
+#ifdef qxk_h
     friend class QXK;
     friend class QXThread;
     friend class QXMutex;
     friend class QXSemaphore;
-#endif // QXK_HPP
-#ifdef Q_UTEST
-    friend class QActiveDummy;
-#endif // Q_UTEST
+#endif // qxk_h
 };
 
 //****************************************************************************
@@ -325,30 +295,34 @@ private:
 class QMActive : public QActive {
 public:
     // all the following operations delegate to the QHsm class...
-    void init(void const * const e) override;
-    void init(void) override;
-    void dispatch(QEvt const * const e) override;
+    virtual void init(QEvt const * const e);
+    virtual void init(void);
+    virtual void dispatch(QEvt const * const e);
 
     //! Tests if a given state is part of the active state configuration
-    bool isInState(QMState const * const st) const noexcept;
+    bool isInState(QMState const * const st) const;
 
     //! Return the current active state object (read only)
-    QMState const *stateObj(void) const noexcept {
+    QMState const *stateObj(void) const {
         return m_state.obj;
     }
 
     //! Obtain the current active child state of a given parent (read only)
-    QMState const *childStateObj(QMState const * const parent) const noexcept;
+    QMState const *childStateObj(QMState const * const parent) const;
 
 protected:
     //! protected constructor (abstract class)
-    QMActive(QStateHandler const initial) noexcept;
+    QMActive(QStateHandler const initial);
 
 private:
-    //! operations inherited from QP::QHsm, but disallowed in QP::QMActive
-    using QHsm::isIn;
-    using QHsm::state;
-    using QHsm::childState;
+    //! operation inherited from QActive/QHsm, but disallowed in QP::QMActive
+    bool isIn(QStateHandler const s);
+
+    //! operation inherited from QActive/QHsm, but disallowed in QP::QMActive
+    QStateHandler state(void) const;
+
+    //! operation inherited from QActive/QHsm, but disallowed in QP::QMActive
+    QStateHandler childState(QStateHandler const parent);
 };
 
 
@@ -379,16 +353,13 @@ private:
 /// list, so only armed time events consume CPU cycles.
 ///
 /// @note
-/// QF manages the time events in the macro TICK_X(), which must be called
-/// periodically, from the clock tick ISR or from the special QP::QTicker
-/// active object.
+/// QF manages the time events in the macro TICK_X(), which must be
+/// called periodically, eitehr from a clock tick ISR, or from a task level.
 ///
 /// @note
-/// Even though QP::QTimeEvt is a subclass of QP::QEvt, QP::QTimeEvt instances
-/// can NOT be allocated dynamically from event pools. In other words, it is
-/// illegal to allocate QP::QTimeEvt instances with the Q_NEW() or Q_NEW_X()
-/// macros.
-///
+/// In this version of QF QTimeEvt objects should __not__ be allocated
+/// dynamically from event pools. Currently, QF will not correctly recycle
+/// the dynamically allocated Time Events.
 class QTimeEvt : public QEvt {
 private:
 
@@ -420,50 +391,74 @@ public:
 
     //! The Time Event constructor.
     QTimeEvt(QActive * const act, enum_t const sgnl,
-             std::uint_fast8_t const tickRate = 0U) noexcept;
+             uint_fast8_t const tickRate = static_cast<uint_fast8_t>(0));
 
     //! Arm a time event (one shot or periodic) for event posting.
     void armX(QTimeEvtCtr const nTicks,
-              QTimeEvtCtr const interval = 0U) noexcept;
+              QTimeEvtCtr const interval = static_cast<QTimeEvtCtr>(0));
 
     //! Disarm a time event.
-    bool disarm(void) noexcept;
+    bool disarm(void);
 
     //! Rearm a time event.
-    bool rearm(QTimeEvtCtr const nTicks) noexcept;
-
-    //! Check the "was disarmed" status of a time event.
-    bool wasDisarmed(void) noexcept;
+    bool rearm(QTimeEvtCtr const nTicks);
 
     //! Get the current value of the down-counter of a time event.
-    QTimeEvtCtr currCtr(void) const noexcept;
+    QTimeEvtCtr ctr(void) const;
+
+#if (!defined QP_IMPL) && (QP_API_VERSION < 500)
+    //! @deprecated TimeEvt ctor provided for backwards compatibility.
+    QTimeEvt(enum_t const sgnl) :
+#ifdef Q_EVT_CTOR
+        QEvt(static_cast<QSignal>(sgnl)),
+#endif
+        m_next(static_cast<QTimeEvt *>(0)),
+        m_act(static_cast<void *>(0)),
+        m_ctr(static_cast<QTimeEvtCtr>(0)),
+        m_interval(static_cast<QTimeEvtCtr >(0))
+    {
+#ifndef Q_EVT_CTOR
+        sig = static_cast<QSignal>(sgnl); // set QEvt::sig of this time event
+#endif
+        // time event must be static, see NOTE01
+        poolId_ = static_cast<uint8_t>(0); // not from any event pool
+        refCtr_ = static_cast<uint8_t>(0); // default rate 0, see NOTE02
+    }
+
+    //! @deprecated interface provided for backwards compatibility.
+    void postIn(QActive * const act, QTimeEvtCtr const nTicks) {
+        m_act = act;
+        armX(nTicks, static_cast<QTimeEvtCtr>(0));
+    }
+
+    //! @deprecated interface provided for backwards compatibility.
+    void postEvery(QActive * const act, QTimeEvtCtr const nTicks) {
+        m_act = act;
+        armX(nTicks, nTicks);
+    }
+#endif // (!defined QP_IMPL) && (QP_API_VERSION < 500)
 
 private:
     //! private default constructor only for friends
-    QTimeEvt(void) noexcept;
+    QTimeEvt(void);
 
     //! private copy constructor to disallow copying of QTimeEvts
-    QTimeEvt(QTimeEvt const &) = delete;
+    QTimeEvt(QTimeEvt const &);
 
     //! private assignment operator to disallow assigning of QTimeEvts
-    QTimeEvt & operator=(QTimeEvt const &) = delete;
+    QTimeEvt & operator=(QTimeEvt const &);
 
     //! encapsulate the cast the m_act attribute to QActive*
-    QActive  *toActive(void) noexcept {
-        return static_cast<QActive *>(m_act);
-    }
+    QActive  *toActive(void)  { return static_cast<QActive  *>(m_act); }
 
     //! encapsulate the cast the m_act attribute to QTimeEvt*
-    QTimeEvt *toTimeEvt(void) noexcept {
-        return static_cast<QTimeEvt *>(m_act);
-    }
+    QTimeEvt *toTimeEvt(void) { return static_cast<QTimeEvt *>(m_act); }
 
     friend class QF;
-    friend class QS;
-#ifdef QXK_HPP
+#ifdef qxk_h
     friend class QXThread;
     friend void QXK_activate_(void);
-#endif // QXK_HPP
+#endif // qxk_h
 };
 
 
@@ -473,7 +468,7 @@ private:
 /// This data type represents a set of active objects that subscribe to
 /// a given signal. The set is represented as priority-set, where each
 /// bit corresponds to the unique priority of an active object.
-using QSubscrList = QPSet;
+typedef QPSet QSubscrList;
 
 
 //****************************************************************************
@@ -485,7 +480,7 @@ class QF {
 public:
 
     //! get the current QF version number string of the form X.Y.Z
-    static char_t const *getVersion(void) noexcept {
+    static char_t const *getVersion(void) {
         return versionStr;
     }
 
@@ -494,15 +489,14 @@ public:
 
     //! Publish-subscribe initialization.
     static void psInit(QSubscrList * const subscrSto,
-                       enum_t const maxSignal) noexcept;
+                       enum_t const maxSignal);
 
     //! Event pool initialization for dynamic allocation of events.
-    static void poolInit(void * const poolSto,
-                         std::uint_fast32_t const poolSize,
-                         std::uint_fast16_t const evtSize) noexcept;
+    static void poolInit(void * const poolSto, uint_fast32_t const poolSize,
+                         uint_fast16_t const evtSize);
 
     //! Obtain the block size of any registered event pools
-    static std::uint_fast16_t poolGetMaxBlockSize(void) noexcept;
+    static uint_fast16_t poolGetMaxBlockSize(void);
 
 
     //! Transfers control to QF to run the application.
@@ -519,126 +513,100 @@ public:
     static void stop(void);
 
 #ifndef Q_SPY
-    static void publish_(QEvt const * const e) noexcept;
-    static void tickX_(std::uint_fast8_t const tickRate) noexcept;
+    static void publish_(QEvt const *e);
+    static void tickX_(uint_fast8_t const tickRate);
 #else
+
     //! Publish event to the framework.
-    static void publish_(QEvt const * const e,
-                         void const * const sender) noexcept;
+    static void publish_(QEvt const *e, void const *sender);
 
     //! Processes all armed time events at every clock tick.
-    static void tickX_(std::uint_fast8_t const tickRate,
-                       void const * const sender) noexcept;
+    static void tickX_(uint_fast8_t const tickRate,
+                       void const * const sender);
+
 #endif // Q_SPY
 
     //! Returns true if all time events are inactive and false
     //! any time event is active.
-    static bool noTimeEvtsActiveX(std::uint_fast8_t const tickRate) noexcept;
+    static bool noTimeEvtsActiveX(uint_fast8_t const tickRate);
+
 
     //! This function returns the minimum of free entries of the given
     //! event pool.
-    static std::uint_fast16_t getPoolMin(std::uint_fast8_t const poolId)
-        noexcept;
+    static uint_fast16_t getPoolMin(uint_fast8_t const poolId);
 
     //! This function returns the minimum of free entries of the given
     //! event queue.
-    static std::uint_fast16_t getQueueMin(std::uint_fast8_t const prio)
-        noexcept;
+    static uint_fast16_t getQueueMin(uint_fast8_t const prio);
 
-    //! Internal QF implementation of creating new dynamic event.
-    static QEvt *newX_(std::uint_fast16_t const evtSize,
-                       std::uint_fast16_t const margin,
-                       enum_t const sig) noexcept;
+    //! Internal QP implementation of the dynamic event allocator.
+    static QEvt *newX_(uint_fast16_t const evtSize,
+                       uint_fast16_t const margin, enum_t const sig);
 
     //! Recycle a dynamic event.
-    static void gc(QEvt const * const e) noexcept;
+    static void gc(QEvt const *e);
 
-    //! Internal QF implementation of creating new event reference.
+    //! Internal QF implementation of the event reference creator
     static QEvt const *newRef_(QEvt const * const e,
-                               QEvt const * const evtRef) noexcept;
-
-    //! Internal QF implementation of deleting event reference.
-    static void deleteRef_(QEvt const * const evtRef) noexcept;
+                               QEvt const * const evtRef);
 
     //! Remove the active object from the framework.
-    static void remove_(QActive * const a) noexcept;
+    static void remove_(QActive * const a);
 
     //! array of registered active objects
-    static QActive *active_[QF_MAX_ACTIVE + 1U];
+    static QActive *active_[QF_MAX_ACTIVE + 1];
 
     //! Thread routine for executing an active object @p act.
     static void thread_(QActive *act);
 
     //! Register an active object to be managed by the framework
-    static void add_(QActive * const a) noexcept;
+    static void add_(QActive * const a);
 
     //! Clear a specified region of memory to zero.
-    static void bzero(void * const start,
-                      std::uint_fast16_t const len) noexcept;
-
-// API to be used exclusively inside ISRs (useful in some QP ports)
-#ifdef QF_ISR_API
-#ifdef Q_SPY
-    static void publishFromISR_(QEvt const *e, void *par,
-                                void const *sender) noexcept;
-    static void tickXfromISR_(std::uint_fast8_t const tickRate, void *par,
-                              void const * const sender) noexcept;
-#else
-    static void publishFromISR_(QEvt const *e, void *par) noexcept;
-    static void tickXfromISR_(std::uint_fast8_t const tickRate,
-                              void *par) noexcept;
-#endif // Q_SPY
-
-    static QEvt *newXfromISR_(std::uint_fast16_t const evtSize,
-                              std::uint_fast16_t const margin,
-                              enum_t const sig) noexcept;
-    static void gcFromISR(QEvt const *e) noexcept;
-
-#endif // QF_ISR_API
+    static void bzero(void * const start, uint_fast16_t len);
 
 // to be used in QF ports only...
 private:
+
     //! heads of linked lists of time events, one for every clock tick rate
     static QTimeEvt timeEvtHead_[QF_MAX_TICK_RATE];
 
     friend class QActive;
     friend class QTimeEvt;
-    friend class QS;
-#ifdef QXK_HPP
+#ifdef qxk_h
     friend class QXThread;
-#endif // QXK_HPP
+#endif // qxk_h
 };
 
 //! special value of margin that causes asserting failure in case
 //! event allocation or event posting fails
-std::uint_fast16_t const QF_NO_MARGIN = 0xFFFFU;
+uint16_t const QF_NO_MARGIN = static_cast<uint16_t>(0xFFFF);
 
 
 //****************************************************************************
 //! Ticker Active Object class
 /// @description
-/// QP::QTicker is an efficient active object specialized to process
-/// QF system clock tick at a specified tick frequency [0..#QF_MAX_TICK_RATE].
+/// The QTicker is an efficient active object specialized to process
+/// QF system clock tick at a specified tick frequency [0..QF_MAX_TICK_RATE].
 /// Placing system clock tick processing in an active object allows you
-/// to remove the non-deterministic TICK_X() processing from the interrupt
+/// to remove the non-deterministic QF::TICK_X() processing from the interrupt
 /// level and move it into the thread-level, where you can prioritize it
 /// as low as you wish.
 ///
 class QTicker : public QActive {
 public:
-    explicit QTicker(std::uint_fast8_t const tickRate) noexcept; // ctor
+    QTicker(uint_fast8_t const tickRate); // ctor
 
-    void init(void const * const e) noexcept override;
-    void init(void) noexcept override { this->init(nullptr); }
-    void dispatch(QEvt const * const e) noexcept override;
+    virtual void init(QEvt const * const e);
+    virtual void init(void) { this->init(static_cast<QEvt const *>(0)); }
+    virtual void dispatch(QEvt const * const e);
 #ifndef Q_SPY
-    bool post_(QEvt const * const e,
-               std::uint_fast16_t const margin) noexcept override;
+    virtual bool post_(QEvt const * const e, uint_fast16_t const margin);
 #else
-    bool post_(QEvt const * const e, std::uint_fast16_t const margin,
-               void const * const sender) noexcept override;
+    virtual bool post_(QEvt const * const e, uint_fast16_t const margin,
+                       void const * const sender);
 #endif
-    void postLIFO(QEvt const * const e) noexcept override;
+    virtual void postLIFO(QEvt const * const e);
 };
 
 } // namespace QP
@@ -661,17 +629,18 @@ public:
 // Provide the constructor for the QEvt class?
 #ifdef Q_EVT_CTOR
 
-    #define Q_NEW(evtT_, sig_, ...)                             \
-        (new(QP::QF::newX_(sizeof(evtT_), QP::QF_NO_MARGIN, 0)) \
+    #define Q_NEW(evtT_, sig_, ...) \
+        (new(QP::QF::newX_(static_cast<uint_fast16_t>(sizeof(evtT_)), \
+                     QP::QF_NO_MARGIN, static_cast<enum_t>(0))) \
             evtT_((sig_),  ##__VA_ARGS__))
 
-    #define Q_NEW_X(e_, evtT_, margin_, sig_, ...) do {        \
-        (e_) = static_cast<evtT_ *>(                           \
-                  QP::QF::newX_(sizeof(evtT_), (margin_), 0)); \
-        if ((e_) != nullptr) {                                 \
-            new((e_)) evtT_((sig_),  ##__VA_ARGS__);           \
+    #define Q_NEW_X(e_, evtT_, margin_, sig_, ...) do { \
+        (e_) = static_cast<evtT_ *>(QP::QF::newX_(static_cast<uint_fast16_t>(\
+                  sizeof(evtT_)), (margin_), static_cast<enum_t>(0))); \
+        if ((e_) != static_cast<evtT_ *>(0)) { \
+            new((e_)) evtT_((sig_),  ##__VA_ARGS__); \
         } \
-     } while (false)
+     } while (0)
 
 #else // QEvt is a POD (Plain Old Datatype)
 
@@ -695,8 +664,10 @@ public:
     /// @usage
     /// The following example illustrates dynamic allocation of an event:
     /// @include qf_post.cpp
-    #define Q_NEW(evtT_, sig_) (static_cast<evtT_ *>( \
-         QP::QF::newX_(sizeof(evtT_), QP::QF_NO_MARGIN, (sig_))))
+    #define Q_NEW(evtT_, sig_) \
+        (static_cast<evtT_ *>(QP::QF::newX_( \
+                static_cast<uint_fast16_t>(sizeof(evtT_)), \
+                QP::QF_NO_MARGIN, (sig_))))
 
     //! Allocate a dynamic event (non-asserting version).
     /// @description
@@ -722,9 +693,10 @@ public:
     /// @usage
     /// The following example illustrates dynamic allocation of an event:
     /// @include qf_postx.cpp
-    #define Q_NEW_X(e_, evtT_, margin_, sig_)        \
-        ((e_) = static_cast<evtT_ *>(QP::QF::newX_(  \
-                    sizeof(evtT_) (margin_), (sig_))))
+    #define Q_NEW_X(e_, evtT_, margin_, sig_)  ((e_) = static_cast<evtT_ *>(\
+        QP::QF::newX_(static_cast<uint_fast16_t>(sizeof(evtT_)),\
+                      (margin_), (sig_))))
+
 #endif
 
 //! Create a new reference of the current event `e` */
@@ -764,8 +736,8 @@ public:
 /// @sa Q_NEW_REF()
 ///
 #define Q_DELETE_REF(evtRef_) do { \
-    QP::QF::deleteRef_((evtRef_)); \
-    (evtRef_) = 0U;                \
+    QP::QF::gc((evtRef_)); \
+    (evtRef_) = 0; \
 } while (false)
 
 
@@ -830,13 +802,13 @@ public:
     /// @note
     /// The @p sendedr_ parameter is actually only used when QS tracing
     /// is enabled (macro #Q_SPY is defined). When QS software tracing is
-    /// disenabled, the POST() macro does not pass the @p sender_
+    /// disenabled, the QACTIVE_POST() macro does not pass the @p sender_
     /// parameter, so the overhead of passing this extra parameter is entirely
     /// avoided.
     ///
     /// @note the pointer to the sender object is not necessarily a pointer
-    /// to an active object. In fact, if POST() is called from an interrupt
-    /// or other context, you can create a unique object just to
+    /// to an active object. In fact, if QP::QActive::post() is called from an
+    /// interrupt or other context, you can create a unique object just to
     /// unambiguously identify the sender of the event.
     ///
     /// @sa QP::QActive::post_()
@@ -864,12 +836,13 @@ public:
     /// @note
     /// The @p sender_ parameter is actually only used when QS tracing
     /// is enabled (macro #Q_SPY is defined). When QS software tracing is
-    /// disabled, the POST_X() macro does not pass the @p sender_ parameter,
-    /// so the overhead of passing this extra parameter is entirely avoided.
+    /// disabled, the QACTIVE_POST() macro does not pass the @p sender_
+    /// parameter, so the overhead of passing this extra parameter is
+    /// entirely avoided.
     ///
     /// @note
     /// The pointer to the sender object is not necessarily a pointer
-    /// to an active object. In fact, if POST_X() is called from an
+    /// to an active object. In fact, if QP::QActive::post() is called from an
     /// interrupt or other context, you can create a unique object just to
     /// unambiguously identify the sender of the event.
     ///
@@ -880,8 +853,8 @@ public:
 
 #else
 
-    #define PUBLISH(e_, dummy_)         publish_((e_))
-    #define POST(e_, dummy_)            post_((e_), QP::QF_NO_MARGIN)
+    #define PUBLISH(e_, dummy_)  publish_((e_))
+    #define POST(e_, dummy_)     post_((e_), QP::QF_NO_MARGIN)
     #define POST_X(e_, margin_, dummy_) post_((e_), (margin_))
     #define TICK_X(tickRate_, dummy_)   tickX_((tickRate_))
 
@@ -889,7 +862,6 @@ public:
 
 //! Invoke the system clock tick processing for rate 0
 /// @sa TICK_X()
-#define TICK(sender_) TICK_X(0U, (sender_))
+#define TICK(sender_) TICK_X(static_cast<uint8_t>(0), (sender_))
 
-#endif // QF_HPP
-
+#endif // qf_h

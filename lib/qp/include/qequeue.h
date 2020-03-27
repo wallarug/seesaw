@@ -3,14 +3,14 @@
 /// @ingroup qf
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.8.0
-/// Last updated on  2020-01-13
+/// Last updated for version 5.8.0
+/// Last updated on  2016-11-19
 ///
-///                    Q u a n t u m  L e a P s
-///                    ------------------------
-///                    Modern Embedded Software
+///                    Q u a n t u m     L e a P s
+///                    ---------------------------
+///                    innovating embedded systems
 ///
-/// Copyright (C) 2005-2019 Quantum Leaps. All rights reserved.
+/// Copyright (C) Quantum Leaps, LLC. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -28,16 +28,16 @@
 /// GNU General Public License for more details.
 ///
 /// You should have received a copy of the GNU General Public License
-/// along with this program. If not, see <www.gnu.org/licenses>.
+/// along with this program. If not, see <http://www.gnu.org/licenses/>.
 ///
 /// Contact information:
-/// <www.state-machine.com/licensing>
-/// <info@state-machine.com>
+/// https://state-machine.com
+/// mailto:info@state-machine.com
 ///***************************************************************************
 /// @endcond
 
-#ifndef QEQUEUE_HPP
-#define QEQUEUE_HPP
+#ifndef qequeue_h
+#define qequeue_h
 
 /// @description
 /// This header file must be included in all QF ports that use native QF
@@ -51,31 +51,31 @@
 #ifndef QF_EQUEUE_CTR_SIZE
 
     //! The size (in bytes) of the ring-buffer counters used in the
-    //! native QF event queue implementation. Valid values: 1U, 2U, or 4U;
-    //! default 1U.
+    //! native QF event queue implementation. Valid values: 1, 2, or 4;
+    //! default 1.
     /// @description
-    /// This macro can be defined in the QF port file (qf_port.hpp) to
+    /// This macro can be defined in the QF port file (qf_port.h) to
     /// configure the QP::QEQueueCtr type. Here the macro is not defined
     /// so the default of 1 byte is chosen.
-    #define QF_EQUEUE_CTR_SIZE 1U
+    #define QF_EQUEUE_CTR_SIZE 1
 #endif
 
 
 namespace QP {
 
-#if (QF_EQUEUE_CTR_SIZE == 1U)
+#if (QF_EQUEUE_CTR_SIZE == 1)
     //! The data type to store the ring-buffer counters based on
     //! the macro #QF_EQUEUE_CTR_SIZE.
     /// @description
     /// The dynamic range of this data type determines the maximum length
     /// of the ring buffer managed by the native QF event queue.
-    using QEQueueCtr = std::uint8_t;
-#elif (QF_EQUEUE_CTR_SIZE == 2U)
-    using QEQueueCtr = std::uint16_t;
-#elif (QF_EQUEUE_CTR_SIZE == 4U)
-    using QEQueueCtr = std::uint32_t;
+    typedef uint_fast8_t QEQueueCtr;
+#elif (QF_EQUEUE_CTR_SIZE == 2)
+    typedef uint_fast16_t QEQueueCtr;
+#elif (QF_EQUEUE_CTR_SIZE == 4)
+    typedef uint_fast32_t QEQueueCtr;
 #else
-    #error "QF_EQUEUE_CTR_SIZE defined incorrectly, expected 1U, 2U, or 4U"
+    #error "QF_EQUEUE_CTR_SIZE defined incorrectly, expected 1, 2, or 4"
 #endif
 
 
@@ -158,7 +158,7 @@ private:
 
 public:
     //! public default constructor
-    QEQueue(void) noexcept;
+    QEQueue(void);
 
     //! Initializes the native QF event queue
     /// @description
@@ -168,7 +168,7 @@ public:
     ///
     /// @note The actual capacity of the queue is qLen + 1, because of the
     /// extra location fornEvt_.
-    void init(QEvt const *qSto[], std::uint_fast16_t const qLen) noexcept;
+    void init(QEvt const *qSto[], uint_fast16_t const qLen);
 
     //! "raw" thread-safe QF event queue implementation for the event
     //! posting (FIFO). You can call this function from any task context or
@@ -184,7 +184,7 @@ public:
     /// queue becomes full and cannot accept the event.
     ///
     /// @sa QP::QEQueue::postLIFO(), QP::QEQueue::get()
-    bool post(QEvt const * const e, std::uint_fast16_t const margin) noexcept;
+    bool post(QEvt const * const e, uint_fast16_t const margin);
 
     //! "raw" thread-safe QF event queue implementation for the
     //! First-In-First-Out (FIFO) event posting. You can call this function
@@ -194,7 +194,7 @@ public:
     /// full and cannot accept the event.
     ///
     /// @sa QP::QEQueue::postLIFO(), QP::QEQueue::get()
-    void postLIFO(QEvt const * const e) noexcept;
+    void postLIFO(QEvt const * const e);
 
     //! "raw" thread-safe QF event queue implementation for the
     //! Last-In-First-Out (LIFO) event posting.
@@ -208,7 +208,7 @@ public:
     /// internally a critical section.
     ///
     /// @sa QP::QEQueue::post(), QP::QEQueue::postLIFO(), QP::QEQueue::get()
-    QEvt const *get(void) noexcept;
+    QEvt const *get(void);
 
     //! "raw" thread-safe QF event queue operation for obtaining the number
     //! of free entries still available in the queue.
@@ -220,23 +220,8 @@ public:
     /// so the number of free entries cannot change unexpectedly.
     ///
     /// @sa QP::QMActive::defer(), QP::QMActive::recall()
-    QEQueueCtr getNFree(void) const noexcept {
+    QEQueueCtr getNFree(void) const {
         return m_nFree;
-    }
-
-    //! "raw" thread-safe QF event queue operation for obtaining the minimum
-    //! number of free entries ever in the queue (a.k.a. "low-watermark").
-    ///
-    /// @description
-    /// This operation needs to be used with caution because the
-    /// "low-watermark" can change unexpectedly. The main intent for using
-    /// this operation is to get an idea of queue usage to size the queue
-    /// adequately.
-    ///
-    /// @returns the minimum number of free entries ever in the queue
-    /// since init.
-    QEQueueCtr getNMin(void) const noexcept {
-        return m_nMin;
     }
 
     //! "raw" thread-safe QF event queue operation to find out if the queue
@@ -249,27 +234,24 @@ public:
     /// so no other entity can post events to the queue.
     ///
     /// @sa QP::QMActive::defer(), QP::QMActive::recall()
-    bool isEmpty(void) const noexcept {
-        return m_frontEvt == nullptr;
+    bool isEmpty(void) const {
+        return m_frontEvt == static_cast<QEvt const *>(0);
     }
 
 private:
     //! disallow copying of QEQueue
-    QEQueue(QEQueue const &) = delete;
+    QEQueue(QEQueue const &);
 
     //! disallow assignment of QEQueue
-    QEQueue & operator=(QEQueue const &) = delete;
+    QEQueue & operator=(QEQueue const &);
 
     friend class QF;
     friend class QActive;
     friend class QXThread;
     friend class QTicker;
-#ifdef Q_UTEST
-    friend class QS;
-#endif // Q_UTEST
 };
 
 } // namespace QP
 
-#endif // QEQUEUE_HPP
+#endif // qequeue_h
 
