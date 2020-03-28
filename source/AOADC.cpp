@@ -364,11 +364,17 @@ QState AOADC::Freeruning(AOADC * const me, QEvt const * const e) {
 			Q_ASSERT(!dest->GetUsedCount());
 
 			if(reg >= SEESAW_ADC_CHANNEL_0){
-				
+#ifndef SAMD51				
 				ADC->INTFLAG.reg = ADC_INTFLAG_RESRDY;
 				//read the data
 				while (ADC->INTFLAG.bit.RESRDY == 0);   // Waiting for conversion to complete
 				uint16_t valueRead = ADC->RESULT.reg;
+#else
+				ADC0->INTFLAG.reg = ADC_INTFLAG_RESRDY;
+				//read the data
+				while (ADC0->INTFLAG.bit.RESRDY == 0);   // Waiting for conversion to complete
+				uint16_t valueRead = ADC0->RESULT.reg;
+#endif
 				uint8_t ret[] = { (uint8_t)(valueRead >> 8), (uint8_t)(valueRead & 0xFF) };
 				dest->Write(ret, 2);
 				
