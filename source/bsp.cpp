@@ -268,7 +268,7 @@ void QF::onStartup(void) {
 
     // enable IRQs...
 #ifndef SAMD51
-    NVIC_EnableIRQ(SysTick_IRQn);
+    //NVIC_EnableIRQ(SysTick_IRQn);
 	//NVIC_EnableIRQ(NVMCTRL_IRQn);
 #endif
 #ifndef SAMD51
