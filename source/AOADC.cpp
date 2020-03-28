@@ -281,7 +281,7 @@ seesaw_adc_read:
 #ifndef SAMD51
 					ADC->WINCTRL.reg = req.getValue();
 #else
-					ADC0->WINCTRL.reg = req.getValue();
+					ADC0->CTRLB.bit.WINMODE = req.getValue();
 #endif
 					break;
 				}
