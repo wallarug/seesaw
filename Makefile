@@ -149,6 +149,8 @@ dirs:
 	@python scripts/datecode.py
 	-@mkdir -p $(BUILD_PATH)
 	-@mkdir -p $(BUILD_PATH)/lib/qp/src
+	-@mkdir -p $(BUILD_PATH)/lib/qp/src/qf
+	-@mkdir -p $(BUILD_PATH)/lib/qp/src/qxk
 	-@mkdir -p $(BUILD_PATH)/lib/qp/include
 	-@mkdir -p $(BUILD_PATH)/lib/qp/extras
 	-@mkdir -p $(BUILD_PATH)/lib/qp/ports/arm-cm/qxk/gnu/
