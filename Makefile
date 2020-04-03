@@ -37,7 +37,7 @@ BUILD_PATH=build/$(BOARD)
 
 QPPORT = lib/qp/ports/arm-cm/qxk/gnu
 
-INCLUDES = -I. -I./include -I./include/USB -I./bsp -I./lib/qp/extras -I./lib/qp/include -I./lib/qp/source -I$(QPPORT)
+INCLUDES = -I. -I./include -I./include/USB -I./bsp -I./lib/qp/extras -I./lib/qp/include -I./lib/qp/src -I$(QPPORT)
 INCLUDES += -I./boards/$(BOARD) -Ilib/cmsis/CMSIS/Include
 INCLUDES += -I$(BUILD_PATH)
 
@@ -72,22 +72,22 @@ CSOURCES = Device_Startup/startup_samd10.c \
 endif
 
 COMMON_SRC = \
-	lib/qp/source/qep_hsm.cpp \
-	lib/qp/source/qep_msm.cpp \
-	lib/qp/source/qf_act.cpp \
-	lib/qp/source/qf_actq.cpp \
-	lib/qp/source/qf_defer.cpp \
-	lib/qp/source/qf_dyn.cpp \
-	lib/qp/source/qf_mem.cpp \
-	lib/qp/source/qf_ps.cpp \
-	lib/qp/source/qf_qact.cpp \
-	lib/qp/source/qf_qeq.cpp \
-	lib/qp/source/qf_qmact.cpp \
-	lib/qp/source/qf_time.cpp \
-	lib/qp/source/qxk.cpp \
-	lib/qp/source/qxk_mutex.cpp \
-	lib/qp/source/qxk_sema.cpp \
-	lib/qp/source/qxk_xthr.cpp \
+	lib/qp/src/qf/qep_hsm.cpp \
+	lib/qp/src/qf/qep_msm.cpp \
+	lib/qp/src/qf/qf_act.cpp \
+	lib/qp/src/qf/qf_actq.cpp \
+	lib/qp/src/qf/qf_defer.cpp \
+	lib/qp/src/qf/qf_dyn.cpp \
+	lib/qp/src/qf/qf_mem.cpp \
+	lib/qp/src/qf/qf_ps.cpp \
+	lib/qp/src/qf/qf_qact.cpp \
+	lib/qp/src/qf/qf_qeq.cpp \
+	lib/qp/src/qf/qf_qmact.cpp \
+	lib/qp/src/qf/qf_time.cpp \
+	lib/qp/src/qxk/qxk.cpp \
+	lib/qp/src/qxk/qxk_mutex.cpp \
+	lib/qp/src/qxk/qxk_sema.cpp \
+	lib/qp/src/qxk/qxk_xthr.cpp \
 	lib/qp/include/qstamp.cpp \
 	lib/qp/extras/fw_evt.cpp \
 	lib/qp/extras/fw_log.cpp \
@@ -148,7 +148,7 @@ dirs:
 	@echo "Building $(BOARD)"
 	@python scripts/datecode.py
 	-@mkdir -p $(BUILD_PATH)
-	-@mkdir -p $(BUILD_PATH)/lib/qp/source
+	-@mkdir -p $(BUILD_PATH)/lib/qp/src
 	-@mkdir -p $(BUILD_PATH)/lib/qp/include
 	-@mkdir -p $(BUILD_PATH)/lib/qp/extras
 	-@mkdir -p $(BUILD_PATH)/lib/qp/ports/arm-cm/qxk/gnu/
