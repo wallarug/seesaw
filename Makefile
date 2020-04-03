@@ -54,7 +54,7 @@ INCLUDES += -Ilib/samd10/include/
 endif
 
 SSOURCES = \
-	$(QPPORT)/qxk_port.S \
+	$(QPPORT)/qxk_port.cpp \
 
 ifeq ($(CHIP_FAMILY), SAMD21)
 CSOURCES = Device_Startup/startup_samd21.c \
