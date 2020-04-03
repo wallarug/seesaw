@@ -1,9 +1,8 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QP/C++ port to Qt
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.6.0
+/// Last updated for version 6.6.0 / Qt 5.x
 /// Last updated on  2019-07-30
 ///
 ///                    Q u a n t u m  L e a P s
@@ -36,12 +35,40 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef pixel_label_h
+#define pixel_label_h
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+#include <QLabel>
+#include <QPixmap>
 
-#endif // QPCPP_H
+// PixelLabel class is for drawing graphic displays with up to 24-bit color
+class PixelLabel : public QLabel {
+    Q_OBJECT
 
+public:
+    PixelLabel(QWidget *parent = 0)
+      : QLabel(parent), m_bits(0)
+    {}
+    virtual ~PixelLabel();
+    void init(int width,  int xScale,
+              int height, int yScale,
+              quint8 const bgColor[3]);
+    void clear(void);
+    void setPixel(int x, int y, quint8 const color[3]);
+    void clearPixel(int x, int y) {
+        setPixel(x, y, m_bgColor);
+    }
+    void redraw(void);
+
+private:
+    int      m_width;
+    int      m_xScale;
+    int      m_height;
+    int      m_yScale;
+    QPixmap  m_pixmap;
+    quint32  m_size;
+    quint8  *m_bits;
+    quint8   m_bgColor[3];
+};
+
+#endif // pixel_label_h

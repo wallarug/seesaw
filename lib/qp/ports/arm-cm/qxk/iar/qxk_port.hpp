@@ -1,10 +1,9 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QXK/C++ port to ARM Cortex-M, QXK kernel, IAR-ARM toolset
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
-/// Last updated on  2019-07-30
+/// Last updated on  2019-11-20
 ///
 ///                    Q u a n t u m  L e a P s
 ///                    ------------------------
@@ -36,12 +35,34 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QXK_PORT_HPP
+#define QXK_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+// determination if the code executes in the ISR context
+#define QXK_ISR_CONTEXT_() (__get_IPSR() != 0U)
 
-#endif // QPCPP_H
+// trigger the PendSV exception to pefrom the context switch
+#define QXK_CONTEXT_SWITCH_() \
+    (*Q_UINT2PTR_CAST(uint32_t, 0xE000ED04U) = (1U << 28))
 
+// QXK ISR entry and exit
+#define QXK_ISR_ENTRY() ((void)0)
+
+#define QXK_ISR_EXIT()  do {                                  \
+    QF_INT_DISABLE();                                         \
+    if (QXK_sched_() != 0U) {                                 \
+        *Q_UINT2PTR_CAST(uint32_t, 0xE000ED04U) = (1U << 28); \
+    }                                                         \
+    QF_INT_ENABLE();                                          \
+} while (false)
+
+// initialization of the QXK kernel
+#define QXK_INIT() QXK_init()
+extern "C" void QXK_init(void);
+
+// prototype needed for IAR "Multi-file Compilation"
+extern "C" void Thread_ret(void);
+
+#include "qxk.hpp" // QXK platform-independent public interface
+
+#endif // QXK_PORT_HPP

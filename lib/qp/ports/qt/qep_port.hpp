@@ -1,10 +1,9 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QEP/C++ port to Qt
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.6.0
-/// Last updated on  2019-07-30
+/// Last updated for version 6.8.0 / Qt 5.x
+/// Last updated on  2020-01-13
 ///
 ///                    Q u a n t u m  L e a P s
 ///                    ------------------------
@@ -36,12 +35,17 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QEP_PORT_HPP
+#define QEP_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+// provide QEvt constructors
+#define Q_EVT_CTOR    1
 
-#endif // QPCPP_H
+// provide QEvt virtual destructor
+#define Q_EVT_VIRTUAL 1
+
+#include <cstdint>    // Exact-width types. C++11 dtandard
+#include "qep.hpp"    // QEP platform-independent public interface
+
+#endif // QEP_PORT_HPP
 

@@ -1,7 +1,7 @@
-/// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
-/// @cond
+/// \file
+/// \brief QV/C++ port to Lint, Generic C++ compiler
+/// \note This is just an EXAMPLE of a QV port used for "linting" the QV.
+/// \cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
 /// Last updated on  2019-07-30
@@ -34,14 +34,15 @@
 /// <www.state-machine.com/licensing>
 /// <info@state-machine.com>
 ///***************************************************************************
-/// @endcond
+/// \endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QV_PORT_HPP
+#define QV_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+//lint -save -e1960    MISRA-C++:2008 Rule 7-3-1, Global declaration
 
-#endif // QPCPP_H
+//lint -restore
 
+#include "qv.hpp" // QK platform-independent public interface
+
+#endif // QV_PORT_HPP

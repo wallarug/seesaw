@@ -1,6 +1,5 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QF/C++ port to MSP430, cooperative QV kernel
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
@@ -36,12 +35,41 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QF_PORT_HPP
+#define QF_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+// The maximum number of active objects in the application, see NOTE01
+#define QF_MAX_ACTIVE        8U
 
-#endif // QPCPP_H
+#define QF_EVENT_SIZ_SIZE    1U
+#define QF_EQUEUE_CTR_SIZE   1U
+#define QF_MPOOL_SIZ_SIZE    1U
+#define QF_MPOOL_CTR_SIZE    1U
+#define QF_TIMEEVT_CTR_SIZE  2U
 
+// QF interrupt disable/enable...
+#define QF_INT_DISABLE()     __disable_interrupt()
+#define QF_INT_ENABLE()      __enable_interrupt()
+
+// QF critical section entry/exit...
+#define QF_CRIT_STAT_TYPE    unsigned short
+#define QF_CRIT_ENTRY(stat_) do { \
+    (stat_) =  __get_interrupt_state(); \
+    __disable_interrupt(); \
+} while (false)
+#define QF_CRIT_EXIT(stat_)  __set_interrupt_state(stat_)
+
+
+#include <intrinsics.h> // intrinsic functions
+
+#include "qep_port.hpp"   // QEP port
+#include "qv_port.hpp"    // QV cooperative kernel port
+#include "qf.hpp"         // QF platform-independent public interface
+
+//****************************************************************************
+// NOTE01:
+// The maximum number of active objects QF_MAX_ACTIVE can be increased
+// up to 64, if necessary. Here it is set to a lower level to save some RAM.
+//
+
+#endif // QF_PORT_HPP

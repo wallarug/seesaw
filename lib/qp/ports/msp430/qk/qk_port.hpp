@@ -1,6 +1,5 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QK/C++ port to MSP430
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
@@ -36,12 +35,25 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QK_PORT_HPP
+#define QK_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+// QK interrupt entry and exit...
+#define QK_ISR_ENTRY()    (++QK_attr_.intNest)
 
-#endif // QPCPP_H
+#define QK_ISR_EXIT()     do {    \
+    --QK_attr_.intNest;           \
+    if (QK_attr_.intNest == 0U) { \
+        if (QK_sched_() != 0U) {  \
+            QK_activate_();       \
+        }                         \
+    }                             \
+    else {                        \
+        Q_ERROR();                \
+    }                             \
+} while (false)
+
+#include "qk.hpp"  // QK platform-independent public interface
+
+#endif // QK_PORT_HPP
 

@@ -1,6 +1,5 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QV/C++ port to ARM Cortex-M, GNU-ARM toolset
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
@@ -36,12 +35,33 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QV_PORT_HPP
+#define QV_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+#if (__ARM_ARCH == 6) // Cortex-M0/M0+/M1 ?, see NOTE02
 
-#endif // QPCPP_H
+    // macro to put the CPU to sleep inside QV_onIdle()
+    #define QV_CPU_SLEEP() do { \
+        __asm volatile ("wfi"); \
+        QF_INT_ENABLE(); \
+    } while (false)
 
+#else // Cortex-M3/M4/M4F
+
+    // macro to put the CPU to sleep inside QV_onIdle()
+    #define QV_CPU_SLEEP() do { \
+        QF_PRIMASK_DISABLE(); \
+        QF_INT_ENABLE(); \
+        __asm volatile ("wfi"); \
+        QF_PRIMASK_ENABLE(); \
+    } while (false)
+
+    // initialization of the QV kernel for Cortex-M3/M4/M4F
+    #define QV_INIT() QV_init()
+    extern "C" void QV_init(void);
+
+#endif
+
+#include "qv.hpp" // QV platform-independent public interface
+
+#endif // QV_PORT_HPP

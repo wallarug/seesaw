@@ -1,6 +1,6 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QK/C++ port to PIC32, preemptive QK kernel, XC32 toolchain
+/// @ingroup qep
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
@@ -36,12 +36,39 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QK_PORT_HPP
+#define QK_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+// QK interrupt entry and exit
+#define QK_ISR_ENTRY() do { \
+    QF_INT_DISABLE(); \
+    ++QK_attr_.intNest; \
+    QF_INT_ENABLE(); \
+} while (false)
 
-#endif // QPCPP_H
+#define QK_ISR_EXIT() do { \
+    QF_INT_DISABLE(); \
+    --QK_attr_.intNest; \
+    if (QK_sched_() != (uint_fast8_t)0) { \
+        IFS0SET = _IFS0_CS0IF_MASK; \
+    } \
+    QF_INT_ENABLE(); \
+} while (false)
+
+// initialization of the QK kernel
+#define QK_INIT() QK_init()
+extern "C" void QK_init(void);
+
+#include "qk.hpp"  // QK platform-independent public interface
+
+//////////////////////////////////////////////////////////////////////////////
+// NOTE1:
+// Any interrupt service routine that interacts with QP must begin with the
+// QK_ISR_ENTRY() macro and must end with the QK_ISR_EXIT() macro. The source
+// file containing the interrupt service routine must #include <p32xxxx.h> or
+// <plib.h>. Core software interrupt 0 and Interrupt Priority Level 1 are
+// reserved for use by QK.
+//
+
+#endif // QK_PORT_HPP
 

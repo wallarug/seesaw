@@ -1,9 +1,8 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QP/C++ port to Qt
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.6.0
+/// Last updated for version 6.6.0 / Qt 5.x
 /// Last updated on  2019-07-30
 ///
 ///                    Q u a n t u m  L e a P s
@@ -36,12 +35,29 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef AOTHREAD_HPP
+#define AOTHREAD_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+#include <QThread>
 
-#endif // QPCPP_H
+namespace QP {
 
+class AOThread : public QThread {
+    Q_OBJECT
+
+public:
+    AOThread(void *act)
+      : m_act(act),
+        m_isRunning(false)
+    {}
+    virtual ~AOThread();
+    virtual void run();
+
+public:
+    void *m_act;
+    bool  m_isRunning;
+};
+
+} // namespace QP
+
+#endif // AOTHREAD_HPP

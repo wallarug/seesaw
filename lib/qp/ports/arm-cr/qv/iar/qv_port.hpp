@@ -1,6 +1,5 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QV/C++ port to ARM Cortex-R, IAR-ARM toolset
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
@@ -36,12 +35,15 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QV_PORT_HPP
+#define QV_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+// macro to put the CPU to sleep inside QV_onIdle()
+#define QV_CPU_SLEEP() do { \
+    __WFI(); \
+    QF_INT_ENABLE(); \
+} while (false)
 
-#endif // QPCPP_H
+#include "qv.hpp" // QV platform-independent public interface
 
+#endif // QV_PORT_HPP

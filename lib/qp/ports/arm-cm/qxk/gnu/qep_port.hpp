@@ -1,16 +1,15 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QEP/C++ port, GCC-ARM compiler
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.6.0
-/// Last updated on  2019-07-30
+/// Last updated for version 6.8.0
+/// Last updated on  2020-01-21
 ///
 ///                    Q u a n t u m  L e a P s
 ///                    ------------------------
 ///                    Modern Embedded Software
 ///
-/// Copyright (C) 2005-2019 Quantum Leaps. All rights reserved.
+/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -36,12 +35,14 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QEP_PORT_HPP
+#define QEP_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+//! no-return function specifier (GCC-ARM compiler)
+#define Q_NORETURN   __attribute__ ((noreturn)) void
 
-#endif // QPCPP_H
+#include <cstdint>  // Exact-width types. C++11 Standard
 
+#include "qep.hpp"  // QEP platform-independent public interface
+
+#endif // QEP_PORT_HPP

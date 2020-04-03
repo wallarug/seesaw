@@ -1,10 +1,9 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QK/C++ port to ARM Cortex-M, preemptive QK kernel, IAR-ARM toolset
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
-/// Last updated on  2019-07-30
+/// Last updated on  2019-11-20
 ///
 ///                    Q u a n t u m  L e a P s
 ///                    ------------------------
@@ -36,12 +35,30 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QK_PORT_HPP
+#define QK_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+// determination if the code executes in the ISR context
+#define QK_ISR_CONTEXT_() (__get_IPSR() != 0U)
 
-#endif // QPCPP_H
+// QK interrupt entry and exit
+#define QK_ISR_ENTRY() ((void)0)
 
+#define QK_ISR_EXIT()  do { \
+    QF_INT_DISABLE(); \
+    if (QK_sched_() != 0U) { \
+        ((*Q_UINT2PTR_CAST(uint32_t, 0xE000ED04U) = (1U << 28))); \
+    } \
+    QF_INT_ENABLE(); \
+} while (false)
+
+// initialization of the QK kernel
+#define QK_INIT() QK_init()
+extern "C" void QK_init(void);
+
+// prototype needed for IAR "Multi-file Compilation"
+extern "C" void Thread_ret(void);
+
+#include "qk.hpp" // QK platform-independent public interface
+
+#endif // QK_PORT_HPP

@@ -1,16 +1,15 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QP::QActive::QActive() definition
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.6.0
-/// Last updated on  2019-07-30
+/// Last updated for version 6.8.0
+/// Last updated on  2020-01-13
 ///
 ///                    Q u a n t u m  L e a P s
 ///                    ------------------------
 ///                    Modern Embedded Software
 ///
-/// Copyright (C) 2005-2019 Quantum Leaps. All rights reserved.
+/// Copyright (C) 2005-2020 Quantum Leaps. All rights reserved.
 ///
 /// This program is open source software: you can redistribute it and/or
 /// modify it under the terms of the GNU General Public License as published
@@ -36,12 +35,26 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#define QP_IMPL           // this is QP implementation
+#include "qf_port.hpp"    // QF port
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+namespace QP {
 
-#endif // QPCPP_H
+//****************************************************************************
+QActive::QActive(QStateHandler const initial) noexcept
+  : QHsm(initial),
+    m_prio(0U)
+{
+    m_state.fun = Q_STATE_CAST(&QHsm::top);
+
+#ifdef QF_OS_OBJECT_TYPE
+    QF::bzero(&m_osObject, sizeof(m_osObject));
+#endif
+
+#ifdef QF_THREAD_TYPE
+    QF::bzero(&m_thread, sizeof(m_thread));
+#endif
+}
+
+} // namespace QP
 

@@ -1,9 +1,8 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief TickerThread port to Qt
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.6.0
+/// Last updated for version 6.6.0 / Qt 5.x
 /// Last updated on  2019-07-30
 ///
 ///                    Q u a n t u m  L e a P s
@@ -35,13 +34,26 @@
 /// <info@state-machine.com>
 ///***************************************************************************
 /// @endcond
+#ifndef TICKERTHREAD_HPP
+#define TICKERTHREAD_HPP
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#include <QThread>
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+namespace QP {
 
-#endif // QPCPP_H
+class TickerThread : public QThread {
+    Q_OBJECT
 
+public:
+    TickerThread() : m_isRunning(false) {}
+    virtual ~TickerThread();
+    virtual void run();
+
+public:
+    unsigned m_tickInterval;
+    bool     m_isRunning;
+};
+
+} // namespace QP
+
+#endif // TICKERTHREAD_HPP

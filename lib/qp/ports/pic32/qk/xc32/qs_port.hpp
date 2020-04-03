@@ -1,6 +1,6 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QS/C++ port to 32-bit CPU, generic C++ compiler
+/// @ingroup qep
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
@@ -36,12 +36,26 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QS_PORT_HPP
+#define QS_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+// QS time-stamp size in bytes
+#define QS_TIME_SIZE        4U
 
-#endif // QPCPP_H
+// object pointer size in bytes
+#define QS_OBJ_PTR_SIZE     4U
+
+// function pointer size in bytes
+#define QS_FUN_PTR_SIZE     4U
+
+//****************************************************************************
+// NOTE: QS might be used with or without other QP components, in which case
+// the separate definitions of the macros QF_CRIT_STAT_TYPE, QF_CRIT_ENTRY,
+// and QF_CRIT_EXIT are needed. In this port QS is configured to be used with
+// the other QP component, by simply including "qf_port.hpp" *before* "qs.hpp".
+//
+#include "qf_port.hpp" // use QS with QF
+#include "qs.hpp"      // QS platform-independent public interface
+
+#endif // QS_PORT_HPP
 

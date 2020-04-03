@@ -1,9 +1,8 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QP/C++ port to Qt
 /// @cond
 ///***************************************************************************
-/// Last updated for version 6.6.0
+/// Last updated for version 6.6.0 / Qt 5.x
 /// Last updated on  2019-07-30
 ///
 ///                    Q u a n t u m  L e a P s
@@ -36,12 +35,25 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef guiapp_h
+#define guiapp_h
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+#include <QApplication>
 
-#endif // QPCPP_H
+namespace QP {
 
+class GuiApp : public QApplication {
+    Q_OBJECT
+
+public:
+    GuiApp(int &argc, char **argv);
+    void registerAct(void *act);
+    virtual bool event(QEvent *e);
+
+private:
+    void *m_act; // GUI active object associated with this GUI application
+};
+
+} // namespace QP
+
+#endif // guiapp_h

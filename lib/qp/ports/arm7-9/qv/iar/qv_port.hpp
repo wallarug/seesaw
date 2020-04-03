@@ -1,6 +1,5 @@
 /// @file
-/// @brief QP/C++ public interface old-version for backwards-compatibility
-/// @ingroup qep qf qv qk qxk qs
+/// @brief QV/C++ port to ARM, cooperative QV kernel, generic C++ compiler
 /// @cond
 ///***************************************************************************
 /// Last updated for version 6.6.0
@@ -36,12 +35,26 @@
 ///***************************************************************************
 /// @endcond
 
-#ifndef QPCPP_H
-#define QPCPP_H
+#ifndef QV_PORT_HPP
+#define QV_PORT_HPP
 
-#ifndef QPCPP_HPP
-#include "qpcpp.hpp"
-#endif // QPCPP_HPP
+extern "C" {
+    void QV_irq(void);
 
-#endif // QPCPP_H
+    void BSP_irq(void);
+    // void BSP_fiq(void); see NOTE1
+}
+
+#include "qv.hpp" // QV platform-independent public interface
+
+//****************************************************************************
+// NOTE1:
+// The FIQ-type interrupts are never disabled in this port, so the FIQ is
+// a "kernel-unaware" interrupt.
+//
+// If the FIQ is ever used in the application, it must be implemented in
+// assembly.
+//
+
+#endif // QV_PORT_HPP
 
