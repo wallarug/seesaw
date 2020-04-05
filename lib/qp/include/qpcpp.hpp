@@ -92,7 +92,7 @@
 //! Macro to specify the superstate in the "me->" impl-strategy.
 /// Instead use the new impl-strategy without the "me->" pointer, where
 /// you call super(state_)).
-#define Q_SUPER(state_)       (me->super((state_)))
+#define Q_SUPER(state_)       (me->super((Q_STATE_CAST(state_))))
 
 //! @deprecated
 //! Macro to call in a QM state entry-handler. Applicable only to QMSMs.
