@@ -41,6 +41,8 @@
 //! no-return function specifier (GCC-ARM compiler)
 #define Q_NORETURN   __attribute__ ((noreturn)) void
 
+#define Q_EVT_CTOR
+
 #include <cstdint>  // Exact-width types. C++11 Standard
 
 #include "qep.hpp"  // QEP platform-independent public interface

@@ -45,7 +45,8 @@ public:
     static void operator delete(void *evt);
 
     Evt(QP::QSignal signal, uint16_t seq = 0) :
-        QP::QEvt(signal), m_seq(seq) {}
+        QP::QEvt(signal), m_seq(seq) 
+	{}
     ~Evt() {}
     uint16_t GetSeq() const { return m_seq; }
 

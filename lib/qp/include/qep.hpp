@@ -166,7 +166,7 @@ namespace QP {
         QEvt(QSignal const s, StaticEvt /*dummy*/) noexcept
           : sig(s),
             poolId_(0U),
-            refCtr_(0U))
+            refCtr_(0U)
         {}
 
 #ifdef Q_EVT_VIRTUAL
