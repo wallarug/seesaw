@@ -113,7 +113,7 @@ QState AODAC::Stopped(AODAC * const me, QEvt const * const e) {
             break;
         }
         default: {
-            status = Q_SUPER(&AODAC::Root);
+            status = Q_SUPER(Q_STATE_CAST(&AODAC::Root));
             break;
         }
     }
@@ -143,7 +143,7 @@ QState AODAC::Started(AODAC * const me, QEvt const * const e) {
 			break;
 		}
         default: {
-            status = Q_SUPER(&AODAC::Root);
+            status = Q_SUPER(Q_STATE_CAST(&AODAC::Root));
             break;
         }
     }
