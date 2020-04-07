@@ -36,6 +36,8 @@ LDFLAGS= $(COMMON_FLAGS) \
 BUILD_PATH=build/$(BOARD)
 
 QPPORT = lib/qp/ports/arm-cm/qxk/gnu
+QPPORT_QF = lib/qp/src/qf
+QPPORT_QXK = lib/qp/src/qxk
 
 INCLUDES = -I. -I./include -I./include/USB -I./bsp -I./lib/qp/extras -I./lib/qp/include -I./lib/qp/src -I$(QPPORT)
 INCLUDES += -I./boards/$(BOARD) -Ilib/cmsis/CMSIS/Include
@@ -53,8 +55,8 @@ ifeq ($(CHIP_FAMILY), SAMD10)
 INCLUDES += -Ilib/samd10/include/
 endif
 
-SSOURCES = \
-	$(QPPORT)/qxk_port.cpp \
+#SSOURCES = \
+#	$(QPPORT)/qxk_port.cpp \
 
 ifeq ($(CHIP_FAMILY), SAMD21)
 CSOURCES = Device_Startup/startup_samd21.c \
@@ -91,6 +93,7 @@ COMMON_SRC = \
 	lib/qp/include/qstamp.cpp \
 	lib/qp/extras/fw_evt.cpp \
 	lib/qp/extras/fw_log.cpp \
+	lib/qp/ports/arm-cm/qxk/gnu/qxk_port.cpp \
 
 SOURCES = $(COMMON_SRC) \
 	source/bsp.cpp \
@@ -148,10 +151,10 @@ dirs:
 	@echo "Building $(BOARD)"
 	@python scripts/datecode.py
 	-@mkdir -p $(BUILD_PATH)
+	-@mkdir -p $(BUILD_PATH)/lib/qp/include
 	-@mkdir -p $(BUILD_PATH)/lib/qp/src
 	-@mkdir -p $(BUILD_PATH)/lib/qp/src/qf
 	-@mkdir -p $(BUILD_PATH)/lib/qp/src/qxk
-	-@mkdir -p $(BUILD_PATH)/lib/qp/include
 	-@mkdir -p $(BUILD_PATH)/lib/qp/extras
 	-@mkdir -p $(BUILD_PATH)/lib/qp/ports/arm-cm/qxk/gnu/
 	-@mkdir -p $(BUILD_PATH)/source/USB
