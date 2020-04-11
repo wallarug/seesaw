@@ -5,7 +5,11 @@
 #include "SeesawConfig.h"
 
 inline void syncTC_8(Tc* TCx) {
+#ifdef SAMD51
+	while(TCx->COUNT8.SYNCBUSY.bit.STATUS);
+#else
 	while (TCx->COUNT8.STATUS.bit.SYNCBUSY);
+#endif
 }
 
 inline void syncTC_16(Tc* TCx) {
