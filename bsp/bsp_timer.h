@@ -13,7 +13,11 @@ inline void syncTC_8(Tc* TCx) {
 }
 
 inline void syncTC_16(Tc* TCx) {
+#ifdef SAMD51
+	while(TCx->COUNT16.SYNCBUSY.bit.STATUS);
+#else
 	while (TCx->COUNT16.STATUS.bit.SYNCBUSY);
+#endif
 }
 
 #ifdef USE_TCC_TIMERS
